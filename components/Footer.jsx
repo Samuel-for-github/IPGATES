@@ -1,5 +1,6 @@
 import { Alert, Button, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+
 // import { supabase } from '../../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.js';
 import { hp, wp } from '../helper/common.js'
@@ -16,9 +17,9 @@ const Footer = () => {
   return (
       
         <View style={styles.footer}>
-          <Pressable style={styles.footerIcon}>
-            <AntDesign name="search1" size={24} color="white" />
-            <Text style={{color: theme.colors.textLight}}>Dicover</Text>
+          <Pressable style={styles.footerIcon} onPress={()=>router.push('/home')}>
+          <AntDesign name="home" size={27} color="white" />
+            <Text style={{color: theme.colors.textLight}}>Home</Text>
           </Pressable>
           <Pressable onPress={()=>console.log("Test")} style={styles.footerIcon}>
             <FontAwesome6 name="graduation-cap" size={24} color="white" />

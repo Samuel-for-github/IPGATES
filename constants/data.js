@@ -96,3 +96,5 @@ export const courses =[
         img: require('../assets/images/bg2.jpg')
     }
 ]
+
+export const features = ["Courses", "Notes", "Attendance", "Demo", "Job Notification"];

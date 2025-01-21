@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Input from '../../components/Input.jsx'
 import { LinearGradient } from 'expo-linear-gradient';
-import { courses } from '../../constants/data.js';
+import { courses, features } from '../../constants/data.js';
 import Footer from '../../components/Footer.jsx';
 const home = () => {
   const { setAuth, user } = useAuth()
@@ -66,22 +66,26 @@ const home = () => {
        
 
        
-         <ScrollView horizontal>
+         <ScrollView>
        
           <View style={styles.content}>
       
-      {courses.map((value, i)=>{
+      {features.map((value, i)=>{
         return(
-          <TouchableOpacity
-          onPress={() => 
-            router.push(`/courses/course?path=${encodeURIComponent(value.title)}`)
-          }
-          key={i}
-          style={[styles.cards]}
+          <TouchableOpacity key={i} style={styles.cards}
+          onPress={() => {
+              router.push(`/section/${value}`)
+            // router.push(`/courses/course?path=${encodeURIComponent(value.title)}`)
+          }}
         >
-          <Image blurRadius={45} style={[styles.card1]} source={value.img} />
-          <Text style={styles.cardsText}>{value.title}</Text>
+          <LinearGradient style={styles.gradient} colors={['rgb(218,255,185)',  '#a990eb']}>
+        {/* <Text>Test</Text> */}
+          {/* <Image blurRadius={45} style={[styles.card1]} source={value.img} /> */}
+          <Text style={styles.cardsText}>{value}</Text>
+          </LinearGradient>
         </TouchableOpacity>
+          
+          
         )
       })}
             {/* <TouchableOpacity onPress={()=>router.push('notes')} style={[styles.cards]}>
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
 top:{
-backgroundColor: 'rgb(222, 224, 228)',
+// backgroundColor: 'rgb(222, 224, 228)',
 marginHorizontal: wp(3),
 borderRadius: theme.radius.md,
 gap: hp(10),
@@ -159,24 +163,27 @@ paddingBottom: hp(3)
   },
   content: {
     flex: 1,
-    flexDirection: 'row',
-    gap: 10,
+    // flexDirection: 'row',
+    // gap: wp(1),
     marginHorizontal: wp(3),
-    // alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: wp(15)
   },
   cards: {
     flex: 1,
     marginVertical: hp(3),
-    paddingVertical: hp(5),
+    paddingVertical: hp(2),
+    // borderColor: theme.colors.primary,
+    // borderWidth: 1,
     borderRadius: theme.radius.xl,
     width: wp(81),
     borderCurve: 'continuous',
     alignItems: 'center',
     shadowColor: theme.colors.dark,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    height: hp(21)
+    height: hp(15)
   },
   card1: {
     position: 'absolute',
@@ -197,5 +204,15 @@ paddingBottom: hp(3)
     position: 'absolute',
     height: hp(150),
     width: wp(100),
+  },
+  gradient:{
+    // borderColor: theme.colors.primary,
+    // borderWidth: 1,
+    // marginVertical: hp(-),
+    paddingVertical: hp(5),
+    borderRadius: theme.radius.xl,
+    height: hp(15),
+    width: wp(85),
+    alignItems: 'center'
   }
 })
