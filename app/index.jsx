@@ -4,11 +4,13 @@ import { useRouter } from 'expo-router'
 import ScreenWrapper from '../components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar'
 import Loading from '../components/Loading';
+// import Home from './(main)/home'
 const index = () => {
     const router = useRouter();
   return (
    <View style={{flex: 1, alignItems: 'center', justifyContent: "center"}}>
     <Loading/>
+    {/* <Home /> */}
    </View>
   )
 }

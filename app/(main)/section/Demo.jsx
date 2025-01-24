@@ -1,19 +1,19 @@
 import { Alert, Button, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import ScreenWrapper from '../../components/ScreenWrapper'
-import { supabase } from '../../lib/supabase.js';
-import { useAuth } from '../../context/AuthContext.js';
+import ScreenWrapper from '../../../components/ScreenWrapper.jsx'
+import { supabase } from '../../../lib/supabase.js';
+import { useAuth } from '../../../context/AuthContext.js';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { hp, wp } from '../../helper/common.js'
+import { hp, wp } from '../../../helper/common.js'
 import Feather from '@expo/vector-icons/Feather';
-import {theme} from '../../constants/theme.js'
+import {theme} from '../../../constants/theme.js'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter} from 'expo-router';
-import BackButton from '../../components/BackButton.jsx'
-
-import Avatar from '../../components/Avatar.jsx';
-const attendance = () => {
+import BackButton from '../../../components/BackButton.jsx'
+import Footer from '../../../components/Footer.jsx';
+import Avatar from '../../../components/Avatar.jsx';
+const Demo = () => {
   const { setAuth, user } = useAuth()
       const router = useRouter()
 
@@ -57,10 +57,7 @@ const attendance = () => {
     <BackButton color="white" size={35}/>
         
           <View style={styles.icon}>
-            <Pressable onPress={()=> router.push('profile')}>
-              <Avatar uri={user?.image} size={hp(3)} rounded={theme.radius.sm} style={{borderWidth: 2, borderColor: 'white'}} />
-             
-            </Pressable>
+           
             <Pressable>
             <Ionicons name="notifications-outline" size={24} color="white" />
             </Pressable>
@@ -70,16 +67,16 @@ const attendance = () => {
           </View>
         </View>
        <View>
-        <Text style={styles.heading}>Attendance</Text>
+        <Text style={styles.heading}>Demo</Text>
        </View>
-    
       </View>
+       <Footer/>
      
     </ScreenWrapper>
   )
 }
 
-export default attendance
+export default Demo
 
 const styles = StyleSheet.create({
   container: {
