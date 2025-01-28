@@ -15,6 +15,7 @@ import BackButton from '../../components/BackButton.jsx';
 // import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Avatar from '../../components/Avatar.jsx';
+import Footer from '../../components/Footer.jsx';
 const profile = () => {
     const router = useRouter()
     const { user} = useAuth()
@@ -46,22 +47,22 @@ const profile = () => {
     }
 
     return (
-        <ScreenWrapper bg="#000">
-            <StatusBar style='light' />
+        <ScreenWrapper bg="#b7e4c7">
+            <StatusBar style='dark' />
             <View style={styles.container}>
                 <View style={styles.header}>
                     <View>
-                        <BackButton color="white" size={wp(8)} />
+                        <BackButton  size={wp(8)} />
                     </View>
                     <View>
                         <Text style={styles.heading}>Profile</Text>
                     </View>
                     <View style={styles.icon}>
                         <Pressable>
-                            <Ionicons name="notifications-outline" size={24} color="white" />
+                            <Ionicons name="notifications-outline" size={24}  />
                         </Pressable>
                         <Pressable onPress={handleLogout}>
-                            <Feather name="log-out" size={24} color="white" />
+                            <Feather name="log-out" size={24}  />
                         </Pressable>
                     </View>
                 </View>
@@ -82,11 +83,11 @@ const profile = () => {
                         </View>
                         <View style={{gap: 10, marginHorizontal: wp(4)}}>
                             <View style={styles.info}>
-                                <Ionicons name='mail-outline' size={hp(5)} color="white"/>
+                                <Ionicons name='mail-outline' size={hp(5)} />
                                 <Text style={styles.infoText}>{user && user.email}</Text>
                             </View>
                             <View style={styles.info}>
-                                <Ionicons name='call-outline' size={hp(5)} color="white"/>
+                                <Ionicons name='call-outline' size={hp(5)} />
                                 <Text style={styles.infoText}>{user && user.phoneNumber? user.phoneNumber: 'Null'}</Text>
                             </View>
                         </View>
@@ -96,6 +97,7 @@ const profile = () => {
                     </View>
                 </View>
             </View>
+            <Footer/>
         </ScreenWrapper>
     )
 }
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     heading: {
-        color: theme.colors.textLight,
+        // color: theme.colors.textLight,
         fontSize: hp(4),
     },
     header: {
@@ -157,12 +159,12 @@ const styles = StyleSheet.create({
     username:{
         fontSize: hp(4),
         fontWeight: '500',
-        color: theme.colors.textLight
+        // color: theme.colors.textLight
     },
     infoText: {
         fontSize: hp(2),
         fontWeight: theme.fonts.medium,
-        color: theme.colors.blue
+        // color: theme.colors.blue
     },
     info:{
         flexDirection: 'row',

@@ -12,12 +12,36 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter} from 'expo-router';
 import BackButton from '../../../components/BackButton.jsx'
 import Footer from '../../../components/Footer.jsx';
-import Avatar from '../../../components/Avatar.jsx';
+import { useVideoPlayer, VideoView} from 'expo-video';
+
 const Demo = () => {
   const { setAuth, user } = useAuth()
       const router = useRouter()
+      const assetId = require('../../../assets/video/org.mp4');
+      const assetId2 = require('../../../assets/video/linux.mp4');
+      const assetId3 = require('../../../assets/video/song.mp4');
+      const assetId4 = require('../../../assets/video/add.mp4');
+      const videoSource1= {
+        assetId,
+        metadata: {
+          title: 'Org',
+          artist: 'IPGATES',
+        }
+      }
+   
 
-
+ const player1 = useVideoPlayer(videoSource1, player => {
+    player.loop = true;
+  });
+  const player2 = useVideoPlayer(assetId2, player => {
+    player.loop = true;
+  });
+  const player3 = useVideoPlayer(assetId3, player => {
+    player.loop = true;
+  });
+  const player4 = useVideoPlayer(assetId4, player => {
+    player.loop = true;
+  });
    async function signOut() {
   
           const { error } = await supabase.auth.signOut()
@@ -43,35 +67,42 @@ const Demo = () => {
           ])
       }
   return (
-    <ScreenWrapper bg="#000">
-      <StatusBar style='light' />
-           {/* <Image  */}
-      {/* style={styles.background} */}
-      {/* blurRadius={40} */}
-      {/* source={{uri: 'https://images.pexels.com/photos/1144687/pexels-photo-1144687.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'}}/> */}
+    <ScreenWrapper bg="#b7e4c7">
+      <StatusBar style='dark' />
+           
       <View style={styles.container}>
  
         <View style={styles.header}>
-          {/* <Text style={styles.appName}>IPGATES</Text> */}
+        
 
-    <BackButton color="white" size={35}/>
+    <BackButton  size={35}/>
         
           <View style={styles.icon}>
            
             <Pressable>
-            <Ionicons name="notifications-outline" size={24} color="white" />
+            <Ionicons name="notifications-outline" size={24}  />
             </Pressable>
             <Pressable onPress={handleLogout}>
-              <Feather name="log-out" size={24} color="white" />
+              <Feather name="log-out" size={24}  />
             </Pressable>
           </View>
         </View>
-       <View>
-        <Text style={styles.heading}>Demo</Text>
-       </View>
+       
+        <Text style={styles.heading}>Demo Videos</Text>
+        <ScrollView>
+        <View style={styles.contentContainer}>
+          <VideoView style={styles.video} player={player1} allowsFullscreen allowsPictureInPicture />
+          <View style={styles.controlsContainer}/>
+          <VideoView style={styles.video} player={player2} allowsFullscreen allowsPictureInPicture />
+          <View style={styles.controlsContainer}/>
+          <VideoView style={styles.video} player={player3} allowsFullscreen allowsPictureInPicture />
+          <View style={styles.controlsContainer}/>
+          <VideoView style={styles.video} player={player4} allowsFullscreen allowsPictureInPicture />
+          <View style={styles.controlsContainer}/>
       </View>
-       <Footer/>
-     
+       </ScrollView>
+      </View>
+   
     </ScreenWrapper>
   )
 }
@@ -79,11 +110,18 @@ const Demo = () => {
 export default Demo
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 50,
+  },
   container: {
     flex: 1,
   },
   heading:{
-    color: theme.colors.textLight,
+    // color: theme.colors.textLight,
     fontSize: hp(6),
     width: wp(80),
     marginVertical: hp(3),
@@ -144,5 +182,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: hp(150),
     width: wp(100),
-  }
+  },
+  video: {
+    width: 350,
+    height: 275,
+  },
+  controlsContainer: {
+    padding: 10,
+  },
 })

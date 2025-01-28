@@ -22,11 +22,7 @@ const courses = () => {
     const segments = useSegments();
     const { path } = useLocalSearchParams()
 
-    useEffect(() => {
-        console.log(path);
-        console.log('Current Route:', segments.join('/')); // Logs the current route path
-
-    }, [segments]);
+ 
     async function signOut() {
 
         const { error } = await supabase.auth.signOut()
@@ -52,19 +48,19 @@ const courses = () => {
         ])
     }
     return (
-        <ScreenWrapper bg="#000">
-            <StatusBar style='light' />
+        <ScreenWrapper bg="#b7e4c7">
+            <StatusBar style='dark' />
             <View style={styles.container}>
 
                 <View style={styles.header}>
-                    <BackButton color="white" size={35} />
+                    <BackButton  size={35} />
 
                     <View style={styles.icon}>
                         <Pressable>
-                            <Ionicons name="notifications-outline" size={24} color="white" />
+                            <Ionicons name="notifications-outline" size={24}  />
                         </Pressable>
                         <Pressable onPress={handleLogout}>
-                            <Feather name="log-out" size={24} color="white" />
+                            <Feather name="log-out" size={24}  />
                         </Pressable>
                     </View>
                 </View>
@@ -76,20 +72,21 @@ const courses = () => {
                         {path == 'Microsoft' && MicrosoftData.map((text, i) => {
 
                             return (
-                                <LinearGradient colors={['rgb(218,255,185)', 'rgb(169,144,235)']} key={i} style={[styles.cards]}>
+                                <View key={i} style={[styles.cards]}>
                                     <TouchableOpacity onPress={() => {
                                         if (text.heading == "Microsoft Technology Associate : MTA (Windows Server Administration Fundamentals)") {
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
 
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Windows%20Server%20Administration%20Fundamentals.pdf?ver=1736266649685')
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Windows%20Server%20Administration%20Fundamentals.pdf?ver=1736266649685')
                                         }
                                         if (text.heading == "Microsoft Technology Associate : MTA (Networking Fundamentals)") {
-
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Networking%20Fundamentals.pdf?ver=1736266649685')
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Networking%20Fundamentals.pdf?ver=1736266649685')
                                         }
 
                                         if (text.heading == `Microsoft Azure Fundamentals (Cloud)`) {
-
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/Microsoft%20Certified%20Azure%20Fundamentals.pdf?ver=1736266649685')
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/Microsoft%20Certified%20Azure%20Fundamentals.pdf?ver=1736266649685')
                                         }
                                     }}>
 
@@ -102,42 +99,42 @@ const courses = () => {
                                             </Text>
                                         </View>
                                     </TouchableOpacity>
-                                </LinearGradient>
+                                </View>
                             )
                         })}
                         {path == 'Cisco' && CiscoData.map((text, i) => {
                             return (
-                                <LinearGradient colors={['rgb(218,255,185)', 'rgb(252,183,240)']} key={i} style={[styles.cards]}>
+                                <View key={i} style={[styles.cards]}>
                                     <Pressable  onPress={() => {
                                         if (text.heading == "CCNA 200-301 : Cisco Certified Network Associate") {
-
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/200-301-CCNA.pdf?ver=1736266647983')
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/200-301-CCNA.pdf?ver=1736266647983')
                                         }
                                         if (text.heading == "CCNP Enterprise Certifications (Core Exam-350-401) : Enterprise Network Core Technologies") {
-
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/350-401-ENCORE%20CCNP.pdf?ver=1736266647983')
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/350-401-ENCORE%20CCNP.pdf?ver=1736266647983')
                                         }
 
                                         if (text.heading == `CCNP Enterprise Certifications (Concentration Exam- 300-410 ENARSI) : Enterprise Advanced Routing`) {
-
-                                            Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/300-410-ENARSI%20CCNP.pdf?ver=1736266647983')
+                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
+                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/300-410-ENARSI%20CCNP.pdf?ver=1736266647983')
                                         }
                                     }}>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
                                         </Text>
-                                        <View style={{ marginHorizontal: wp(7), marginTop: hp(2) }}>
-                                            <Text style={{ color: theme.colors.textDark }}>
+                                        <View style={[{ marginHorizontal: wp(10), marginTop: hp(2) },]}>
+                                            <Text style={{ color: theme.colors.textDark}}>
                                                 {text.subheading}
                                             </Text>
                                         </View>
                                     </Pressable>
-                                </LinearGradient>
+                                </View>
                             )
                         })}
                         {path == 'Red Hat Linux' && RedHatLinuxData.map((text, i) => {
                             return (
-                                <LinearGradient colors={['rgb(252,183,240)', 'rgb(169,144,235)']} key={i} style={[styles.cards]}>
+                                <View key={i} style={[styles.cards]}>
                                     <Pressable>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
@@ -148,12 +145,12 @@ const courses = () => {
                                             </Text>
                                         </View>
                                     </Pressable>
-                                </LinearGradient>
+                                </View>
                             )
                         })}
                         {path == 'Python' && PythonData.map((text, i) => {
                             return (
-                                <LinearGradient colors={['rgb(218,255,185)', 'rgb(169,144,235)']} key={i} style={[styles.cards]}>
+                                <View key={i} style={[styles.cards]}>
                                     <Pressable>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
@@ -164,12 +161,12 @@ const courses = () => {
                                             </Text>
                                         </View>
                                     </Pressable>
-                                </LinearGradient>
+                                </View>
                             )
                         })}
                         {path == 'Hardware & Networking' && HandNData.map((text, i) => {
                             return (
-                                <LinearGradient colors={['rgb(218,255,185)', 'rgb(252,183,240)']} key={i} style={[styles.cards]}>
+                                <View key={i} style={[styles.cards]}>
                                     <Pressable>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
@@ -180,13 +177,13 @@ const courses = () => {
                                             </Text>
                                         </View>
                                     </Pressable>
-                                </LinearGradient>
+                                </View>
                             )
                         })}
 
                     </View>
                 </ScrollView>
-                <Footer />
+                
             </View>
 
         </ScreenWrapper>
@@ -200,7 +197,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     heading: {
-        color: theme.colors.textLight,
+        color: theme.colors.textDark,
         fontSize: hp(6),
         width: wp(80),
         marginVertical: hp(3),
@@ -233,6 +230,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginVertical: hp(3),
         paddingVertical: hp(5),
+        paddingHorizontal: wp(4),
         borderRadius: theme.radius.xl,
         width: wp(81),
         borderCurve: 'continuous',
@@ -241,7 +239,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.2,
         shadowRadius: 8,
-        backgroundColor: 'rgb(253, 253, 253)'
+        backgroundColor: '#40916c',
     },
     card1: {
         position: 'absolute',

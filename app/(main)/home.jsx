@@ -44,10 +44,11 @@ const home = () => {
     ])
   }
   return (
-    <ScreenWrapper bg="#000">
-      <StatusBar style='light' />
+    <ScreenWrapper bg="#b7e4c7">
+      <StatusBar style='dark' />
       <View style={styles.container}>
-        <LinearGradient colors={['rgb(218,255,185)',  '#a990eb']} style={styles.top}>
+      {/* <Image source={require('../../assets/images/welcome.png')} style={styles.welcomeImage} resizeMode='contain' /> */}
+        <View style={styles.top}>
         <View style={styles.header}>
           <Text style={styles.headingText}>Hi, {user.s_name}</Text>
           <View style={styles.icon}>
@@ -60,34 +61,34 @@ const home = () => {
           </View>
         </View>
         <View>
-          <Input icon={<AntDesign name="search1" size={24} color="black" />} containerStyles={[{backgroundColor: 'white'}, styles.containerStyles]} placeholderTextColor={theme.colors.textDark} placeholder="Search here"/>
+          <Input icon={<AntDesign name="search1" size={24} color="black" />} containerStyles={[{backgroundColor: '#d8f3dc'}, styles.containerStyles]} placeholderTextColor={theme.colors.textDark} placeholder="Search here"/>
         </View>
-        </LinearGradient>
+        </View>
        
 
        
-         <ScrollView>
        
-          <View style={styles.content}>
-      
-      {features.map((value, i)=>{
+       <ScrollView>
+       <View style={styles.content}>
+             {features.map((value, i)=>{
         return(
           <TouchableOpacity key={i} style={styles.cards}
           onPress={() => {
-              router.push(`/section/${value}`)
-            // router.push(`/courses/course?path=${encodeURIComponent(value.title)}`)
+              router.push(`/section/${value.title}`)
           }}
         >
-          <LinearGradient style={styles.gradient} colors={['rgb(218,255,185)',  '#a990eb']}>
-        {/* <Text>Test</Text> */}
-          {/* <Image blurRadius={45} style={[styles.card1]} source={value.img} /> */}
-          <Text style={styles.cardsText}>{value}</Text>
-          </LinearGradient>
+        
+          
+         <Image style={{height: 100, width: 100}} source={value.img}/>
+          <Text style={styles.cardsText}>{value.title}</Text>
+         
         </TouchableOpacity>
-          
-          
         )
-      })}
+      })} 
+          </View>
+       </ScrollView>
+        
+      
             {/* <TouchableOpacity onPress={()=>router.push('notes')} style={[styles.cards]}>
             <Image style={[styles.card1]} source={require('../../assets/images/bg2.jpg')}/>
               <Text style={styles.cardsText}>Notes</Text>
@@ -102,8 +103,8 @@ const home = () => {
             <Image style={[styles.card1]} source={require('../../assets/images/bg1.jpg')}/>
               <Text style={styles.cardsText}>Feedback</Text>
             </TouchableOpacity> */}
-          </View>
-        </ScrollView> 
+        
+  
       
        <Footer/>
       </View>
@@ -115,12 +116,19 @@ const home = () => {
 export default home
 
 const styles = StyleSheet.create({
+  welcomeImage: {
+    position: 'absolute',
+    height: hp(100),
+    width: wp(100),
+    opacity: 0.3
+    // alignSelf: 'center'
+},
   container: {
     flex: 1,
     justifyContent: 'space-between'
   },
 top:{
-// backgroundColor: 'rgb(222, 224, 228)',
+// backgroundColor: 'rgb(106, 167, 116)',
 marginHorizontal: wp(3),
 borderRadius: theme.radius.md,
 gap: hp(10),
@@ -129,7 +137,7 @@ paddingBottom: hp(3)
   },
   containerStyles:{
     marginHorizontal: wp(3.5),
-    borderRadius: 10
+    borderRadius: 70
     
   },
   headingText:{
@@ -163,40 +171,35 @@ paddingBottom: hp(3)
   },
   content: {
     flex: 1,
-    // flexDirection: 'row',
-    // gap: wp(1),
-    marginHorizontal: wp(3),
-    alignItems: 'center',
-    marginBottom: wp(15)
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: wp(95),
+    height: hp(100),
+    gap: wp(4),
+    // marginHorizontal: wp(5),
+    marginLeft: wp(2),
+    justifyContent: 'center',
+  //  borderWidth: 2
+
   },
   cards: {
-    flex: 1,
-    marginVertical: hp(3),
-    paddingVertical: hp(2),
-    // borderColor: theme.colors.primary,
-    // borderWidth: 1,
+    backgroundColor: '#40916c',
     borderRadius: theme.radius.xl,
-    width: wp(81),
     borderCurve: 'continuous',
     alignItems: 'center',
     shadowColor: theme.colors.dark,
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    height: hp(15)
-  },
-  card1: {
-    position: 'absolute',
-    top: -80,
-    width: wp(40),
-    height: hp(40),
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{ rotate: '90deg' }]
+    width: wp(45),
+    height: hp(25),
+    justifyContent: 'space-between',
+    paddingVertical: hp(2),
+    
+    // flex: 1
   },
   cardsText: {
-    fontSize: hp(4),
+    fontSize: hp(2.5),
     fontWeight: theme.fonts.semibold,
     color: theme.colors.textDark,
   },
@@ -205,14 +208,9 @@ paddingBottom: hp(3)
     height: hp(150),
     width: wp(100),
   },
-  gradient:{
-    // borderColor: theme.colors.primary,
-    // borderWidth: 1,
-    // marginVertical: hp(-),
-    paddingVertical: hp(5),
-    borderRadius: theme.radius.xl,
-    height: hp(15),
-    width: wp(85),
-    alignItems: 'center'
+  box:{
+    width: '50%',
+    height: '50%',
+    backgroundColor: '#40916c'
   }
 })

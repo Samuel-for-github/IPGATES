@@ -80,21 +80,30 @@ This course focuses on  the fundamentals of Linux administration “survival ski
 export const courses =[
     {
         title: "Microsoft",
-        img: require('../assets/images/bg1.jpg')
+        // img: require('../assets/images/bg1.jpg')
     },
     {
         title: "Cisco",
-        img: require('../assets/images/bg2.jpg')
+        // img: require('../assets/images/bg1.jpg')
     }, {
         title:  "Red Hat Linux",
-        img: require('../assets/images/bg3.jpg')
+        // img: require('../assets/images/bg1.jpg')
     }, {
         title: "Python",
-        img: require('../assets/images/bg1.jpg')
+        // img: require('../assets/images/bg1.jpg')
     }, {
         title: "Hardware & Networking",
-        img: require('../assets/images/bg2.jpg')
+        // img: require('../assets/images/bg1.jpg')
     }
 ]
 
-export const features = ["Courses", "Notes", "Attendance", "Demo", "Job Notification"];
+export const features = [
+    {
+        title:"Courses",
+        img: require('../assets/images/courses.png')
+    },
+    {title:"Notes", img: require('../assets/images/notes.png')}, 
+    {title:"Attendance", img: require('../assets/images/attendance.png')}, 
+    {title:"Demo", img: require('../assets/images/demo.png')}, 
+    {title:"Job Notification", img: require('../assets/images/job.png')}
+];

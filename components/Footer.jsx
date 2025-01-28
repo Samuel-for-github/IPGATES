@@ -1,5 +1,5 @@
 import { Alert, Button, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 // import { supabase } from '../../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.js';
@@ -10,55 +10,88 @@ import { useRouter } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Avatar from '../components/Avatar.jsx';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-const Footer = () => {
-  const {  user } = useAuth()
+import FooterContext from '../context/FooterContext.js';
+const Footer = (props) => {
+  const { user } = useAuth()
   const router = useRouter()
+  const { isActive, setIsActive } = useContext(FooterContext);
+
 
   return (
-      
-        <View style={styles.footer}>
-          <Pressable style={styles.footerIcon} onPress={()=>router.push('/home')}>
-          <AntDesign name="home" size={27} color="white" />
-            <Text style={{color: theme.colors.textLight}}>Home</Text>
-          </Pressable>
-          <Pressable onPress={()=>console.log("Test")} style={styles.footerIcon}>
-            <FontAwesome6 name="graduation-cap" size={24} color="white" />
-            <Text style={{color: theme.colors.textLight}}>My Course</Text>
-          </Pressable>
-          <Pressable style={styles.footerIcon}>
-            <Ionicons name="chatbox-outline" size={24} color="white" />
-            <Text style={{color: theme.colors.textLight}}>Chat</Text>
-          </Pressable>
-          <Pressable onPress={() => router.push('profile')} style={styles.footerIcon}>
-            <Avatar uri={user?.image} size={hp(4)} rounded={theme.radius.xl} style={{ borderWidth: 2, borderColor: 'white' }} />
-            <Text style={{color: theme.colors.textLight}}>Account</Text>
-          </Pressable>
-        </View>
-   
+
+    <View style={[styles.footer, props.style]}>
+      <Pressable style={[
+        styles.footerIcon,
+        isActive === 'home' ? styles.tab : {}
+      ]}
+        onPress={() => {
+          setIsActive('home')
+          router.push('/home')
+        }}>
+        <AntDesign name="home" size={23} color="black" />
+        <Text style={{ color: isActive=='home'? theme.colors.dark:'#b7e4c7'}}>Home</Text>
+      </Pressable>
+      <Pressable onPress={() => {
+        setIsActive('course')
+      }} style={[
+        styles.footerIcon,
+        isActive === 'course' ? styles.tab : {}
+      ]}>
+        <FontAwesome6 name="graduation-cap" size={23} color="black" />
+        <Text style={{ color: isActive=='course'? theme.colors.dark:'#b7e4c7'}}>My Course</Text>
+      </Pressable>
+      <Pressable onPress={() => setIsActive('chat')} style={[
+        styles.footerIcon,
+        isActive === 'chat' ? styles.tab : {}
+      ]}>
+        <Ionicons name="chatbox-outline" size={23} color="black" />
+        <Text style={{ color: isActive=='chat'? theme.colors.dark:'#b7e4c7'}}>Chat</Text>
+      </Pressable>
+      <Pressable onPress={() => {
+        setIsActive('profile')
+        router.push('profile')
+      }} style={[
+        styles.footerIcon,
+        isActive === 'profile' ? styles.tab : {}
+      ]}>
+        <Avatar uri={user?.image} size={hp(3)} rounded={theme.radius.xl} style={{ borderWidth: 2, borderColor: 'black' }} />
+        <Text style={{ color: isActive=='profile'? theme.colors.dark:'#b7e4c7'}}>Account</Text>
+      </Pressable>
+    </View>
+
   )
 }
 
 export default Footer
 
 const styles = StyleSheet.create({
+  tab:{
+    // alignItems: 'center',
+    backgroundColor: 'white',
+    width: wp(25),
+    height: hp(7),
+    borderRadius: 90
+    // paddingHorizontal: wp(5),
+   
+  },
   container: {
     flex: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
-top:{
-backgroundColor: 'rgb(222, 224, 228)',
-marginHorizontal: wp(3),
-borderRadius: theme.radius.md,
-gap: hp(10),
-paddingBottom: hp(3)
-// borderWidth: 2
+  top: {
+    backgroundColor: 'rgb(222, 224, 228)',
+    marginHorizontal: wp(3),
+    borderRadius: theme.radius.md,
+    gap: hp(10),
+    paddingBottom: hp(3),
+
   },
-  containerStyles:{
+  containerStyles: {
     marginHorizontal: wp(3.5),
     borderRadius: 10
-    
+
   },
-  headingText:{
+  headingText: {
     fontSize: hp(3),
     color: 'black'
   },
@@ -74,13 +107,15 @@ paddingBottom: hp(3)
     },
     shadowOpacity: 1,
     shadowRadius: 8,
+    paddingVertical: 5
+    // borderWidth: 2,
     // elevation: 5,
   },
-  footerIcon:{
+  footerIcon: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: hp(7)
-    // borderWidth:2
+    height: hp(8),
+    borderRadius: '100%'
   },
   heading: {
     color: theme.colors.textLight,

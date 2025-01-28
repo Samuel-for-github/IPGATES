@@ -4,11 +4,14 @@ import { Stack, useRouter } from 'expo-router'
 import { supabase } from '../lib/supabase'
 import { AuthProvider, useAuth } from '../context/AuthContext'
 import { getStudentData } from '../services/studentService'
+import { FooterProvider } from '../context/FooterContext'
 
 const _layout = ()=>{
   return(
     <AuthProvider>
+      <FooterProvider>
       <MainLayout/>
+      </FooterProvider>
     </AuthProvider>
   )
 }
