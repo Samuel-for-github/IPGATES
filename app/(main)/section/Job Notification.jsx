@@ -1,148 +1,186 @@
-import { Alert, Button, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import ScreenWrapper from '../../../components/ScreenWrapper.jsx'
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import ScreenWrapper from '../../../components/ScreenWrapper.jsx';
 import { supabase } from '../../../lib/supabase.js';
 import { useAuth } from '../../../context/AuthContext.js';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { hp, wp } from '../../../helper/common.js'
 import Feather from '@expo/vector-icons/Feather';
-import {theme} from '../../../constants/theme.js'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter} from 'expo-router';
-import BackButton from '../../../components/BackButton.jsx'
+import { useRouter } from 'expo-router';
+import BackButton from '../../../components/BackButton.jsx';
 import Footer from '../../../components/Footer.jsx';
-import Avatar from '../../../components/Avatar.jsx';
+import { hp, wp } from '../../../helper/common.js';
+import { theme } from '../../../constants/theme.js';
+
 const JobNotification = () => {
-  const { setAuth, user } = useAuth()
-      const router = useRouter()
+  const { user } = useAuth(); // Get the logged-in user
+  const router = useRouter();
+  const [notifications, setNotifications] = useState([]); // State to hold the job notifications
+  const [loading, setLoading] = useState(true);
 
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('Error', error.message);
+    }
+  }
 
-   async function signOut() {
-  
-          const { error } = await supabase.auth.signOut()
-          console.log(error);
-  
-          if (error) {
-              Alert.alert('Error', error.message)
-          }
+  const handleLogout = async () => {
+    Alert.alert('Confirm', 'Are you sure you want to log out?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('logout cancel'),
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: () => signOut(),
+        style: 'destructive',
+      },
+    ]);
+  };
+
+  // Fetch job notifications for the logged-in user
+  const fetchNotifications = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from('jobNotification')
+        .select('*')
+        .eq('student_id', user.id); // Assuming `user.id` is the identifier for the user
+
+      if (error) {
+        throw error;
       }
-  
-      const handleLogout= async()=>{
-          Alert.alert('Confirm', 'Are you sure you want to log out?', [
-              {
-                  text: 'Cancel',
-                  onPress: ()=>console.log("logout cancel"),
-                  style: 'cancel'
-                  
-              },{
-                  text: 'Logout',
-                  onPress: ()=>signOut(),
-                  style: 'destructive'
-              }
-          ])
-      }
+
+      setNotifications(data);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
   return (
     <ScreenWrapper bg="#b7e4c7">
-      <StatusBar style='dark' />
-           {/* <Image  */}
-      {/* style={styles.background} */}
-      {/* blurRadius={40} */}
-      {/* source={{uri: 'https://images.pexels.com/photos/1144687/pexels-photo-1144687.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'}}/> */}
+      <StatusBar style="dark" />
       <View style={styles.container}>
- 
         <View style={styles.header}>
-          {/* <Text style={styles.appName}>IPGATES</Text> */}
-
-    <BackButton  size={35}/>
-        
+          <BackButton size={35} />
           <View style={styles.icon}>
-           
             <Pressable>
-            <Ionicons name="notifications-outline" size={24}  />
+              <Ionicons name="notifications-outline" size={24} />
             </Pressable>
             <Pressable onPress={handleLogout}>
-              <Feather name="log-out" size={24}  />
+              <Feather name="log-out" size={24} />
             </Pressable>
           </View>
         </View>
-       <View>
-        <Text style={styles.heading}>Job Notification</Text>
-       </View>
-      </View>
-       <Footer/>
-     
-    </ScreenWrapper>
-  )
-}
 
-export default JobNotification
+        <Text style={styles.heading}>Job Notifications</Text>
+
+        {loading ? (
+          <Text style={styles.loadingText}>Loading...</Text>
+        ) : notifications.length === 0 ? (
+          <Text style={styles.noNotificationsText}>No notifications available</Text>
+        ) : (
+          <ScrollView style={styles.notificationsContainer}>
+            {notifications.map((notification, index) => (
+              <View key={index} style={styles.notificationCard}>
+                <Text style={styles.notificationTitle}>Job Title:- {notification.job_title}</Text>
+                <Text style={styles.notificationCompany}>Job Company:- {notification.company}</Text>
+                <Text style={styles.notificationDescription}>
+                  Job description:- {notification.description}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+
+      <Footer />
+    </ScreenWrapper>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: wp(5),
   },
-  heading:{
+  heading: {
     color: theme.colors.textDark,
-    fontSize: hp(5),
-    width: wp(80),
+    fontSize: hp(4.5),
+    fontWeight: '600',
     marginVertical: hp(3),
     textAlign: 'left',
-    marginLeft: wp(4)
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: wp(3),
-    marginTop: hp(2)
-  },
-  logo:{
-    height: 60,
-    width: 150,
-    backgroundColor: 'rgba(228, 222, 222, 0.91)',
-    borderRadius: 10,
+    marginTop: hp(3),
+    marginBottom: hp(4),
   },
   icon: {
     flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between'
+    gap: wp(4),
   },
-  content: {
+  notificationsContainer: {
     flex: 1,
-    alignItems: 'center'
+    marginTop: hp(3),
   },
-  cards:{
-    flex: 1,
-    marginVertical: hp(3),
-    paddingVertical: hp(5),
-    borderRadius: theme.radius.xl,
-    width: wp(81),
-    borderCurve: 'continuous',
-    alignItems: 'center',
+  notificationCard: {
+    backgroundColor: theme.colors.white,
+    paddingVertical: hp(3),
+    paddingHorizontal: wp(4),
+    borderRadius: theme.radius.md,
+    marginBottom: hp(2),
     shadowColor: theme.colors.dark,
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.2,
-    shadowRadius: 8,  
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: theme.colors.borderLight, // Border color for a subtle border effect
   },
-  card1:{
-    position: 'absolute',
-    top: -80,
-    width: wp(40),
-    height: hp(40),
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{rotate: '90deg'}]
-  },
-  cardsText:{
-    fontSize: hp(7),
+  notificationTitle: {
+    fontSize: hp(2.5),
     fontWeight: theme.fonts.semibold,
     color: theme.colors.textDark,
+    marginBottom: hp(1),
   },
-  background:{
-    position: 'absolute',
-    height: hp(150),
-    width: wp(100),
-  }
-})
+  notificationCompany: {
+    fontSize: hp(2),
+    color: theme.colors.textSecondary,
+    marginBottom: hp(1),
+  },
+  notificationDescription: {
+    fontSize: hp(2),
+    color: theme.colors.textSecondary,
+    lineHeight: hp(2.4),
+  },
+  loadingText: {
+    fontSize: hp(2.5),
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginTop: hp(5),
+  },
+  noNotificationsText: {
+    fontSize: hp(2.5),
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginTop: hp(5),
+  },
+});
+
+export default JobNotification;
