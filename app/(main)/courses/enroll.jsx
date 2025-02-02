@@ -1,5 +1,5 @@
 import { Alert, Pressable, TouchableOpacity, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ScreenWrapper from '../../../components/ScreenWrapper.jsx'
 import { supabase } from '../../../lib/supabase.js';
 import { useAuth } from '../../../context/AuthContext.js';
@@ -16,13 +16,15 @@ import Avatar from '../../../components/Avatar.jsx';
 import Footer from '../../../components/Footer.jsx';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Linking from 'expo-linking'
+import { getCourseData } from '../../../services/courseService.js';
+
 const enroll = () => {
    const router = useRouter()
-    const { path, data } = useLocalSearchParams()
-    useEffect(() => {
-     console.log(path);
-     
-    }, [])
+    const { path, data,price } = useLocalSearchParams()
+    const [loading, setLoading]=useState(false);
+    const [pending, setPending] = useState('not-applied')
+    const { user } = useAuth()
+    
       async function signOut() {
     
             const { error } = await supabase.auth.signOut()
@@ -47,14 +49,38 @@ const enroll = () => {
                 }
             ])
         }
+
+    
+      
+      // Fetching course data
+      const fetchCourseData = async () => {
+          try {
+              const res = await getCourseData(user?.id);
+              res.data.forEach((val) => {
+                  if (path === val.c_name) {
+                      setPending(val.request);
+                  }
+              });
+          } catch (err) {
+              console.error("Error fetching course data:", err.message);
+          } finally {
+              setLoading(false);  // Stop loading after fetching
+          }
+      };
+      
+      // useEffect for fetching course data
+      useEffect(() => {
+          setLoading(true);
+          fetchCourseData();
+      }, [user?.id, path]);  // Run when user ID or course path changes    
+        
+
   return (
     <ScreenWrapper bg="#b7e4c7">
             <StatusBar style='dark' />
             <View style={styles.container}>
-
                 <View style={styles.header}>
                     <BackButton  size={35} />
-
                     <View style={styles.icon}>
                         <Pressable>
                             <Ionicons name="notifications-outline" size={24}  />
@@ -68,14 +94,13 @@ const enroll = () => {
                     <Text style={styles.heading}>{path}</Text>
                 </View>
                 <ScrollView>
-                   
                     <View style={styles.content}>
                       <Text style={{paddingHorizontal: wp(5), fontSize: hp(4), textAlign: 'left'}}>{data}</Text>
-                      <Button title='Enroll' buttonStyle={styles.button}/>
+                      <Text style={styles.price}>Price: {price}</Text>
+                      
                     </View>
                 </ScrollView>
             </View>
-
         </ScreenWrapper>
   )
 }
@@ -84,6 +109,10 @@ export default enroll
 
 
 const styles = StyleSheet.create({
+  price:{
+    fontWeight: theme.fonts.extraBold,
+    fontSize: hp(3)
+  },
   button:{
     paddingHorizontal: wp(5)
   },

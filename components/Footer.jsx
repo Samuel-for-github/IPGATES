@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 // import { supabase } from '../../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.js';
 import { hp, wp } from '../helper/common.js'
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { theme } from '../constants/theme.js'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
@@ -11,6 +12,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Avatar from '../components/Avatar.jsx';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import FooterContext from '../context/FooterContext.js';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 const Footer = (props) => {
   const { user } = useAuth()
   const router = useRouter()
@@ -33,6 +35,7 @@ const Footer = (props) => {
       </Pressable>
       <Pressable onPress={() => {
         setIsActive('course')
+        router.push('/myCourse')
       }} style={[
         styles.footerIcon,
         isActive === 'course' ? styles.tab : {}
@@ -40,12 +43,16 @@ const Footer = (props) => {
         <FontAwesome6 name="graduation-cap" size={23} color="black" />
         <Text style={{ color: isActive=='course'? theme.colors.dark:'#b7e4c7'}}>My Course</Text>
       </Pressable>
-      <Pressable onPress={() => setIsActive('chat')} style={[
+      <Pressable onPress={() => {
+      router.push('/chat')
+      setIsActive('chat')
+      }
+      } style={[
         styles.footerIcon,
         isActive === 'chat' ? styles.tab : {}
       ]}>
-        <Ionicons name="chatbox-outline" size={23} color="black" />
-        <Text style={{ color: isActive=='chat'? theme.colors.dark:'#b7e4c7'}}>Chat</Text>
+       <MaterialIcons name="question-answer" size={24} color="black" />
+        <Text style={{ color: isActive=='chat'? theme.colors.dark:'#b7e4c7'}}>FAQ's</Text>
       </Pressable>
       <Pressable onPress={() => {
         setIsActive('profile')

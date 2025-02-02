@@ -11,31 +11,36 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Button from '../components/Button';
 import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
+// import Toast from 'react-native-toast-message';
 const Login = () => {
  const router = useRouter()
-    const onSubmit = async () => {
-        if (!emailRef.current || !passwordRef.current) {
-            Alert.alert('Login', "please fill all the fields");
-            return;
-        }
-       if(passwordRef.current.length<8){
-        Alert.alert('Login', "password should be atleast 8 characters");
-            return;
-       }
+ const onSubmit = async () => {
+    if (!emailRef.current || !passwordRef.current) {
+        Alert.alert('Login', "Please fill all the fields");
+        return;
+    }
+    if (passwordRef.current.length < 8) {
+        Alert.alert('Login', "Password should be at least 8 characters");
+        return;
+    }
 
-       let email = emailRef.current.trim();
-       let password = passwordRef.current.trim();
-       setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-console.log(error);
+    let email = emailRef.current.trim();
+    let password = passwordRef.current.trim();
+    setLoading(true);
 
-    if (error) Alert.alert('Login',error.message)
-    setLoading(false)
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+        Alert.alert('Login', error.message);
+    } else {
        
     }
+};
 
     const emailRef = useRef()
     const passwordRef = useRef()
@@ -59,6 +64,7 @@ console.log(error);
                     <Pressable onPress={()=>router.push('signUp')}><Text style={[styles.footerText, {color: theme.colors.primaryDark, fontWeight: theme.fonts.semibold}]}>Sign Up</Text></Pressable>
                 </View>
             </View>
+            {/* <Toast/> */}
         </ScreenWrapper>
     )
 }

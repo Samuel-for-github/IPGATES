@@ -2,6 +2,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { supabase } from '../lib/supabase';
+
 export const getImage = imagePath =>{
     if(imagePath){
         return {uri: imagePath}

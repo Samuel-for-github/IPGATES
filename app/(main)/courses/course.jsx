@@ -1,5 +1,5 @@
 import { Alert, Pressable, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '../../../components/ScreenWrapper.jsx'
 import { supabase } from '../../../lib/supabase.js';
 import { useAuth } from '../../../context/AuthContext.js';
@@ -10,19 +10,75 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useSearchParams, useLocalSearchParams, useSegments } from 'expo-router';
 import BackButton from '../../../components/BackButton.jsx'
+import Button from '../../../components/Button.jsx'
 import { MicrosoftData, CiscoData, RedHatLinuxData, PythonData, HandNData, DPData } from '../../../constants/data.js';
-import Avatar from '../../../components/Avatar.jsx';
-import Footer from '../../../components/Footer.jsx';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import * as Linking from 'expo-linking'
+import { getCourseData } from '../../../services/courseService.js';
 const courses = () => {
 
-    const { setAuth, user } = useAuth()
     const router = useRouter()
     const segments = useSegments();
-    const { path } = useLocalSearchParams()
+    const { path,price } = useLocalSearchParams()
 
- 
+      
+        const [loading, setLoading]=useState(false);
+        const [limit, setLimit] = useState(true)
+        const [pending, setPending] = useState('not-applied')
+        const { user } = useAuth()
+
+        const fetchCourseData = async () => {
+            try {
+                const res = await getCourseData(user?.id);
+                
+                res.data.forEach((val) => {
+                    
+                    
+                    if (path === val.c_name) {
+                        
+                        setPending(val.request);
+                    }
+                    
+                });
+            } catch (err) {
+                console.error("Error fetching course data:", err.message);
+            } finally {
+                setLoading(false);
+                
+                  // Stop loading after fetching
+            }
+        };
+        const getAllCousers = async()=>{
+            try {
+                const { count, error } = await supabase
+  .from('course')
+  .select('*', { count: 'exact' })  // Enables counting rows
+  .eq('c_name', path)               // Check for c_name
+  .in('request', ['pending', 'Accepted']);
+                if (error) {
+                    console.log('got error', error);
+                    return {success: false, message: error.message}
+                }
+                console.log(count);
+                
+                //change to ten later
+                if (count==10) {
+                    setLimit(false)
+                }
+                
+                return{success: true, count};
+            } catch (error) {
+                console.log('got error', error);
+                return {success: false, message: error.message}
+                
+            }
+        }
+            useEffect(() => {
+                setLoading(true);
+                getAllCousers()
+                fetchCourseData();
+            }, [path]); 
+        
     async function signOut() {
 
         const { error } = await supabase.auth.signOut()
@@ -31,6 +87,9 @@ const courses = () => {
         if (error) {
             Alert.alert('Error', error.message)
         }
+        setTimeout(() => {
+            router.replace('/welcome');
+        }, 1500);
     }
 
     const handleLogout = async () => {
@@ -55,14 +114,7 @@ const courses = () => {
                 <View style={styles.header}>
                     <BackButton  size={35} />
 
-                    <View style={styles.icon}>
-                        <Pressable>
-                            <Ionicons name="notifications-outline" size={24}  />
-                        </Pressable>
-                        <Pressable onPress={handleLogout}>
-                            <Feather name="log-out" size={24}  />
-                        </Pressable>
-                    </View>
+                   
                 </View>
                 <View>
                     <Text style={styles.heading}>{path}</Text>
@@ -73,22 +125,7 @@ const courses = () => {
 
                             return (
                                 <View key={i} style={[styles.cards]}>
-                                    <TouchableOpacity onPress={() => {
-                                        if (text.heading == "Microsoft Technology Associate : MTA (Windows Server Administration Fundamentals)") {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Windows%20Server%20Administration%20Fundamentals.pdf?ver=1736266649685')
-                                        }
-                                        if (text.heading == "Microsoft Technology Associate : MTA (Networking Fundamentals)") {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/MTA%20Networking%20Fundamentals.pdf?ver=1736266649685')
-                                        }
-
-                                        if (text.heading == `Microsoft Azure Fundamentals (Cloud)`) {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/Microsoft%20Certified%20Azure%20Fundamentals.pdf?ver=1736266649685')
-                                        }
-                                    }}>
+                                    <View>
 
                                         <Text style={styles.cardsText}>
                                             {text.heading}
@@ -98,28 +135,15 @@ const courses = () => {
                                                 {text.subheading}
                                             </Text>
                                         </View>
-                                    </TouchableOpacity>
+                                    </View>
                                 </View>
                             )
                         })}
+                       
                         {path == 'Cisco' && CiscoData.map((text, i) => {
                             return (
                                 <View key={i} style={[styles.cards]}>
-                                    <Pressable  onPress={() => {
-                                        if (text.heading == "CCNA 200-301 : Cisco Certified Network Associate") {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/200-301-CCNA.pdf?ver=1736266647983')
-                                        }
-                                        if (text.heading == "CCNP Enterprise Certifications (Core Exam-350-401) : Enterprise Network Core Technologies") {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/350-401-ENCORE%20CCNP.pdf?ver=1736266647983')
-                                        }
-
-                                        if (text.heading == `CCNP Enterprise Certifications (Concentration Exam- 300-410 ENARSI) : Enterprise Advanced Routing`) {
-                                            router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}`);
-                                            // Linking.openURL('https://img1.wsimg.com/blobby/go/8fb25151-6c87-40dd-b318-a0caffe6d10f/downloads/300-410-ENARSI%20CCNP.pdf?ver=1736266647983')
-                                        }
-                                    }}>
+                                    <View>{/* router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}&price=${encodeURIComponent(text.price)}`); */}
                                         <Text style={styles.cardsText}>
                                             {text.heading}
                                         </Text>
@@ -128,14 +152,16 @@ const courses = () => {
                                                 {text.subheading}
                                             </Text>
                                         </View>
-                                    </Pressable>
+                                    </View>
                                 </View>
                             )
                         })}
                         {path == 'Red Hat Linux' && RedHatLinuxData.map((text, i) => {
                             return (
                                 <View key={i} style={[styles.cards]}>
-                                    <Pressable>
+                                    <View>
+                                        {/* // router.push(`/courses/enroll?path=${encodeURIComponent(text.heading)}&data=${encodeURIComponent(text.subheading)}&price=${encodeURIComponent(text.price)}`); */}
+                                
                                         <Text style={styles.cardsText}>
                                             {text.heading}
                                         </Text>
@@ -144,14 +170,14 @@ const courses = () => {
                                                 {text.subheading}
                                             </Text>
                                         </View>
-                                    </Pressable>
+                                    </View>
                                 </View>
                             )
                         })}
                         {path == 'Python' && PythonData.map((text, i) => {
                             return (
                                 <View key={i} style={[styles.cards]}>
-                                    <Pressable>
+                                    <View>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
                                         </Text>
@@ -160,14 +186,14 @@ const courses = () => {
                                                 {text.subheading}
                                             </Text>
                                         </View>
-                                    </Pressable>
+                                    </View>
                                 </View>
                             )
                         })}
                         {path == 'Hardware & Networking' && HandNData.map((text, i) => {
                             return (
                                 <View key={i} style={[styles.cards]}>
-                                    <Pressable>
+                                    <View>
                                         <Text style={styles.cardsText}>
                                             {text.heading}
                                         </Text>
@@ -176,11 +202,23 @@ const courses = () => {
                                                 {text.subheading}
                                             </Text>
                                         </View>
-                                    </Pressable>
+                                    </View>
                                 </View>
                             )
                         })}
-
+                        <View style={{marginVertical: hp(2)}}>
+                        <Text style={{marginVertical: hp(1), fontSize: hp(5)}}>Price:- {price}</Text>
+                          {pending === 'not-applied'&&limit&&<Button title='Enroll' onPress={()=>{
+                        router.push(`courses/form?course=${encodeURIComponent(path)}&s_name=${user?.s_name}&phone=${user?.phoneNumber}&address=${user?.address}&email=${user?.email}&sId=${user?.id}&fees=${price}`)
+                        // enrolling(path, data,user.s_name, user.id, price)
+                        // setLoading(true)
+                        }} buttonStyle={styles.button}/> || loading&&<Text>Loading...</Text>}
+                        {!limit&&<Text>Enrollment is full</Text>}
+                        {pending==='Completed' && <Text>You have Completed the Course</Text>}
+                        {pending === 'pending'&& <Text>pending</Text>}
+                        {pending === 'Accepted'&& <Text>Already Enrolled</Text>}
+                        </View>
+                        
                     </View>
                 </ScrollView>
                 
@@ -260,5 +298,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         height: hp(150),
         width: wp(100),
-    }
+    },
+    button:{
+        paddingHorizontal: wp(5)
+      },
 })

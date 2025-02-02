@@ -43,8 +43,8 @@ const JobNotification = () => {
           ])
       }
   return (
-    <ScreenWrapper bg="#000">
-      <StatusBar style='light' />
+    <ScreenWrapper bg="#b7e4c7">
+      <StatusBar style='dark' />
            {/* <Image  */}
       {/* style={styles.background} */}
       {/* blurRadius={40} */}
@@ -54,15 +54,15 @@ const JobNotification = () => {
         <View style={styles.header}>
           {/* <Text style={styles.appName}>IPGATES</Text> */}
 
-    <BackButton color="white" size={35}/>
+    <BackButton  size={35}/>
         
           <View style={styles.icon}>
            
             <Pressable>
-            <Ionicons name="notifications-outline" size={24} color="white" />
+            <Ionicons name="notifications-outline" size={24}  />
             </Pressable>
             <Pressable onPress={handleLogout}>
-              <Feather name="log-out" size={24} color="white" />
+              <Feather name="log-out" size={24}  />
             </Pressable>
           </View>
         </View>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   heading:{
-    color: theme.colors.textLight,
+    color: theme.colors.textDark,
     fontSize: hp(5),
     width: wp(80),
     marginVertical: hp(3),

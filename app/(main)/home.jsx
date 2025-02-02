@@ -14,20 +14,24 @@ import Input from '../../components/Input.jsx'
 import { LinearGradient } from 'expo-linear-gradient';
 import { courses, features } from '../../constants/data.js';
 import Footer from '../../components/Footer.jsx';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+// import Toast from 'react-native-toast-message';
+
 const home = () => {
   const { setAuth, user } = useAuth()
   const router = useRouter()
 
 
   async function signOut() {
-
-    const { error } = await supabase.auth.signOut()
-    console.log(error);
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
-      Alert.alert('Error', error.message)
+        Alert.alert('Error', error.message);
+    } else {
+        
     }
-  }
+}
+
 
   const handleLogout = async () => {
     Alert.alert('Confirm', 'Are you sure you want to log out?', [
@@ -47,10 +51,10 @@ const home = () => {
     <ScreenWrapper bg="#b7e4c7">
       <StatusBar style='dark' />
       <View style={styles.container}>
-      {/* <Image source={require('../../assets/images/welcome.png')} style={styles.welcomeImage} resizeMode='contain' /> */}
+     
         <View style={styles.top}>
         <View style={styles.header}>
-          <Text style={styles.headingText}>Hi, {user.s_name}</Text>
+          <Text style={styles.headingText}>Hi, {user?.s_name}</Text>
           <View style={styles.icon}>
             <Pressable>
               <Ionicons name="notifications-outline" size={24} color="black" />
@@ -60,7 +64,12 @@ const home = () => {
             </Pressable>
           </View>
         </View>
+ 
+
+<Image source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738423695/WhatsApp_Image_2025-01-06_at_20.04.06_d94bb8d8-removebg-preview_sx06fp.png'}} style={styles.welcomeImage} resizeMode='contain' />
+
         <View>
+       
           <Input icon={<AntDesign name="search1" size={24} color="black" />} containerStyles={[{backgroundColor: '#d8f3dc'}, styles.containerStyles]} placeholderTextColor={theme.colors.textDark} placeholder="Search here"/>
         </View>
         </View>
@@ -74,12 +83,15 @@ const home = () => {
         return(
           <TouchableOpacity key={i} style={styles.cards}
           onPress={() => {
+           
               router.push(`/section/${value.title}`)
+        
+            
           }}
         >
         
-          
-         <Image style={{height: 100, width: 100}} source={value.img}/>
+         {!value.img?(<FontAwesome5 name="users" size={100} color="black" />):(<Image style={{height: 100, width: 100}} source={value.img}/>)} 
+         
           <Text style={styles.cardsText}>{value.title}</Text>
          
         </TouchableOpacity>
@@ -87,28 +99,9 @@ const home = () => {
       })} 
           </View>
        </ScrollView>
-        
-      
-            {/* <TouchableOpacity onPress={()=>router.push('notes')} style={[styles.cards]}>
-            <Image style={[styles.card1]} source={require('../../assets/images/bg2.jpg')}/>
-              <Text style={styles.cardsText}>Notes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>router.push('attendance')} style={[styles.cards]}>
-            <Image style={[styles.card1]} source={require('../../assets/images/bg3.jpg')}/>
-              <Text style={styles.cardsText}>
-                Attendance
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.cards]}>
-            <Image style={[styles.card1]} source={require('../../assets/images/bg1.jpg')}/>
-              <Text style={styles.cardsText}>Feedback</Text>
-            </TouchableOpacity> */}
-        
-  
-      
        <Footer/>
       </View>
-
+    
     </ScreenWrapper>
   )
 }
@@ -212,5 +205,14 @@ paddingBottom: hp(3)
     width: '50%',
     height: '50%',
     backgroundColor: '#40916c'
-  }
+  },
+  welcomeImage: {
+    position: 'absolute',
+    top: -20,
+    width: wp(70), // Adjust width as per requirement
+    height: hp(20), // Adjust height as per requirement
+    alignSelf: 'center', // Center image horizontally
+    marginVertical: hp(3), // Add some margin to prevent overlap
+    resizeMode: 'contain' // Ensure image fits properly
+}
 })

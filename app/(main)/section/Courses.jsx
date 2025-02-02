@@ -75,14 +75,12 @@ const Courses = () => {
                             return (
                                 <TouchableOpacity key={i} style={styles.cards}
                                     onPress={() => {
-                                        router.push(`/courses/course?path=${encodeURIComponent(value.title)}`)
+                                        router.push(`/courses/course?path=${encodeURIComponent(value.title)}&price=${value.price}`)
                                     }}
                                 >
                                     <Text style={styles.cardsText}>{value.title}</Text>
-
                                 </TouchableOpacity>
                             )
-
                         })}
                     </View>
                 </ScrollView>
