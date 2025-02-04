@@ -80,7 +80,7 @@ const Feedback = () => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headingText}>Hi, {user && user?.s_name}</Text>
+          <Text style={styles.headingText}>Hi, {user && user?.name}</Text>
           <View style={styles.iconGroup}>
             <Pressable>
               <Ionicons name="notifications-outline" size={24} color="black" />

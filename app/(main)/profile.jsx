@@ -78,7 +78,7 @@ const profile = () => {
                             </Pressable>
                         </View>
                         <View style={{alignItems: 'center' , gap:4}}>
-                               <Text style={styles.username}>{user && user.s_name}</Text> 
+                               <Text style={styles.username}>{user && user.name}</Text> 
                                <Text style={styles.infoText}>{user && user.address? user.address:'Null'}</Text> 
                         </View>
                         <View style={{gap: 10, marginHorizontal: wp(4)}}>

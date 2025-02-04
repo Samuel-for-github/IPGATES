@@ -1,6 +1,6 @@
 
   
-  import { Alert, Linking, ScrollView, TouchableOpacity, StyleSheet, Text, Pressable, View } from 'react-native';
+  import { Alert, Linking, ScrollView, Image, StyleSheet, Text, Pressable, View } from 'react-native';
   import React, { useEffect, useState } from 'react';
   import ScreenWrapper from '../../../components/ScreenWrapper.jsx';
   import { supabase } from '../../../lib/supabase.js';
@@ -15,7 +15,8 @@
   import Footer from '../../../components/Footer.jsx';
   import Loading from '../../../components/Loading.jsx';
   import { ipgatesInfo, contactInfo } from '../../../constants/data.js';
-  import MapView, { Marker } from 'react-native-maps';
+import WebView from 'react-native-webview';
+import MapView,{Marker} from 'react-native-maps';
   import * as Location from 'expo-location';
   import Fontisto from '@expo/vector-icons/Fontisto';
   import BackButton from '../../../components/BackButton.jsx';
@@ -72,18 +73,18 @@
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    };
-    getLocation();
-  }, []);
+  // useEffect(() => {
+  //   const getLocation = async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       setErrorMsg('Permission to access location was denied');
+  //       return;
+  //     }
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   };
+  //   getLocation();
+  // }, []);
 
   // Function to handle logout
   const handleLogout = async () => {
@@ -116,21 +117,7 @@
   } else if (location) {
     text = JSON.stringify(location);
   }
-  const WhatsAppButton = ({ phoneNumber }) => {
-    const openWhatsApp = () => {
-      const url = `whatsapp://send?phone=${phoneNumber}`;
-      Linking.openURL(url).catch(() => {
-        alert("Make sure WhatsApp is installed on your device.");
-      });
-    };
-  
-    return (
-      <TouchableOpacity style={styles.button} onPress={openWhatsApp}>
-        <Fontisto name="whatsapp" size={24} color="white" />
-        <Text style={styles.buttonText}>Message us on Whatsapp</Text>
-      </TouchableOpacity>
-    );
-  };
+ 
   
     return (
           <ScreenWrapper bg="#b7e4c7">
@@ -159,33 +146,33 @@
             <InfoCard key={index} title={info.title} description={info.description} points={info.points} />
           ))}
           <ContactInfo />
-          <View style={styles.card}>
-            <Text style={[styles.title, {fontSize: hp(3)}]}>Are you ready to get started?</Text>
-            <Text style={{fontSize: hp(2)}}>If you have questions about the opportunities available in our programs, feel free to send us a message. We will get back to you as soon as possible.</Text>
           
-          <WhatsAppButton phoneNumber={+919960166606}/>
-          </View>
+        <View style={{ borderRadius: theme.radius.md,backgroundColor: theme.colors.primary,  paddingVertical: hp(2),height: hp(50), width: wp(95), alignItems: 'center'}}>
+         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: wp(10), justifyContent: 'center'}}>
+         <Image style={{height: hp(20), width: wp(40), borderRadius: theme.radius.md}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738693412/ipgates/IMG-20250203-WA0004_vundnh.jpg'}}/>
+          <Image style={{height: hp(20), width: wp(40), borderRadius: theme.radius.md}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738693410/ipgates/IMG-20250203-WA0001_pizxvi.jpg'}}/>
+          <Image style={{height: hp(20), width: wp(40), borderRadius: theme.radius.md}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738693407/ipgates/IMG-20250203-WA0003_fjijcw.jpg'}}/>
+          <Image style={{height: hp(20), width: wp(40), borderRadius: theme.radius.md}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738693403/ipgates/IMG-20250203-WA0002_tw3jsm.jpg'}}/>
+         </View>
+         
+        </View>
           <View style={styles.mapContainer}>
             {/* <Text>{text}</Text> */}
-            {location && (
-              <MapView
-                style={styles.map}
-                initialRegion={{
-                  latitude: 15.280091921874444,
-                  longitude: 73.96007892477995,
-                  latitudeDelta: 0.099,
-                  longitudeDelta: 0.0521,
-                }}
-              >
-                <Marker
-                  coordinate={{
-                    latitude: 15.280091921874444,
-                    longitude: 73.96007892477995,
-                  }}
-                  title={"IPGATES"}
-                />
-              </MapView>
-            )}
+            <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: 15.279721876356406,
+          longitude: 73.957533158195,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
+         <Marker
+          coordinate={{ latitude: 15.279721876356406, longitude: 73.957533158195 }}
+          title="I P-Gates"
+        />
+        </MapView>
+
           </View>
         </ScrollView>
 

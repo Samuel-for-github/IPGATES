@@ -209,7 +209,7 @@ const courses = () => {
                         <View style={{marginVertical: hp(2)}}>
                         <Text style={{marginVertical: hp(1), fontSize: hp(5)}}>Price:- {price}</Text>
                           {pending === 'not-applied'&&limit&&<Button title='Enroll' onPress={()=>{
-                        router.push(`courses/form?course=${encodeURIComponent(path)}&s_name=${user?.s_name}&phone=${user?.phoneNumber}&address=${user?.address}&email=${user?.email}&sId=${user?.id}&fees=${price}`)
+                        router.push(`courses/form?course=${encodeURIComponent(path)}&name=${user?.name}&phone=${user?.phoneNumber}&address=${user?.address}&email=${user?.email}&sId=${user?.id}&fees=${price}`)
                         // enrolling(path, data,user.s_name, user.id, price)
                         // setLoading(true)
                         }} buttonStyle={styles.button}/> || loading&&<Text>Loading...</Text>}

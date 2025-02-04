@@ -18,7 +18,7 @@ const Form = () => {
   const {user} = useAuth()
   const { isActive, setIsActive } = useContext(FooterContext);
   const [formData, setFormData] = useState({
-    s_name: params.s_name || '',
+    s_name: params.name || '',
     email: params.email || '',
     phone: params.phone || '',
     age: '',
@@ -39,7 +39,7 @@ const Form = () => {
     { label: 'Email', key: 'email' },
     { label: 'Phone Number', key: 'phone', keyboardType: 'phone-pad' },
     { label: 'Age', key: 'age', keyboardType: 'numeric' },
-    { label: 'School Name', key: 'school' },
+    { label: 'IT Background', key: 'background' },
     { label: 'Address', key: 'address' },
   ]
 
@@ -66,7 +66,7 @@ const Form = () => {
 
   const enrolling = async (courseName, description, s_name, studentId, fees) => {
     setLoading(true)  // Start loading
-    const { data, error } = await supabase.from('course').insert({ c_name: courseName, student_id: studentId, description: description, fees: fees })
+    const { data, error } = await supabase.from('course').insert({ c_name: courseName, student_id: studentId, fees: fees, s_name })
     
     setLoading(false)  // Stop loading
 
@@ -90,6 +90,10 @@ const Form = () => {
     setLoading(false)  // Stop loading after submitting
   }
 
+  useEffect(() => {
+    console.log(params);
+    
+  }, [params])
   
 
   return (
@@ -138,7 +142,7 @@ const Form = () => {
             <Loading/>
           ) : (
             <View style={{alignItems: 'center', paddingVertical: wp(4)}}>
-              <Image style={{width: wp(40), height: hp(20)}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738425595/WhatsApp_Image_2025-02-01_at_20.34.40_213de77e_1_1_r1x16m.png'}}/>
+              {/* <Image style={{width: wp(40), height: hp(20)}} source={{uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738425595/WhatsApp_Image_2025-02-01_at_20.34.40_213de77e_1_1_r1x16m.png'}}/> */}
                {/* https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738425595/WhatsApp_Image_2025-02-01_at_20.34.40_213de77e_1_1_r1x16m.png  */}
               <Button buttonStyle={styles.button} onPress={submit} title="Submit" />
             </View>

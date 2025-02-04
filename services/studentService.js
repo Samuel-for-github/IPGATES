@@ -1,31 +1,24 @@
 import { supabase } from "../lib/supabase";
 
-export const getStudentData = async (studentId)=>{
+export const getStudentData = async (studentId) => {
+   
+    
     try {
-        const {data, error} = await supabase.from('student').select().eq('id', studentId).single();
-        if (error) {
-            console.log('got error', error);
-            return {success: false, message: error.message}
-        }
-        return{success: true, data};
-    } catch (error) {
-        console.log('got error', error);
-        return {success: false, message: error.message}
+        // console.log(studentId);
         
-    }
-}
+        const { data, error } = await supabase
+            .from('users')
+            .select()
+            .match({ id: studentId, role: 'Student' });;
 
-export const updateStudent = async (studentId, data)=>{
-    try {
-        const {error} = await supabase.from('student').update({s_name: data.name, phoneNumber: data.phoneNumber, address: data.address, image: data.image}).eq('id', studentId);
         if (error) {
-            console.log('got error', error);
-            return {success: false, message: error.message}
+            throw new Error(error.message);  // Explicitly throw the error message
         }
-        return{success: true, data};
-    } catch (error) {
-        console.log('got error', error);
-        return {success: false, message: error.message}
+        // console.log(data);
         
+        return data;  // Return the fetched data if successful
+    } catch (error) {
+        console.error("Error fetching student data:", error.message);
+        throw new Error("Failed to fetch student data");  // Provide a generic message for the caller
     }
-}
+};

@@ -15,7 +15,7 @@ import BackButton from '../../components/BackButton.jsx';
 import Button from '../../components/Button.jsx'
 import Avatar from '../../components/Avatar.jsx';
 import Input from '../../components/Input.jsx';
-import { updateStudent } from '../../services/studentService.js';
+import { updateStudent } from '../../services/userService.js';
 import * as ImagePicker from 'expo-image-picker';
 
 import { getImage, uploadFile } from '../../services/imageService.js';
@@ -48,7 +48,7 @@ const editPage = () => {
     useEffect(() => {
         if (user) {
             setInputs({
-                name: user.s_name || '',
+                name: user.name || '',
                 phoneNumber: user.phoneNumber || '',
                 image: user.image || '',
                 address: user.address || ''

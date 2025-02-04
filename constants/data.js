@@ -185,3 +185,42 @@ Upon earning a certification, 61% of tech professionals say they earned a promot
     des:`Understand which skills to prepare.
 Research the path that you wish to build a career in.  Role-based certification training courses, such as our Azure training, Hybrid Server training and Dynamics 365 training, can all help you  into a specific role while preparing for your exam`
 }]
+
+export const computerTrainingCourses = [
+    {
+      question: "Why get computer training?",
+      answer: "If you are thinking about a new career, computer skills are a necessity. Advanced computer courses enhance job security and salary for IT professionals."
+    },
+    {
+      question: "Why should I take instructor-led computer training when I can take computer classes online or self-study for IT certification exams?",
+      answer: "Instructor-led training offers real-time guidance, job-oriented scenarios, and interactive learning, which are difficult with self-study or online courses."
+    },
+    {
+      question: "How long are your computer classes?",
+      answer: "Courses last from two weeks to eight months depending on the program. Call us for details."
+    },
+    {
+      question: "Who will be teaching my computer class?",
+      answer: "Our instructors are experienced, well-spoken, patient, and multi-vendor certified."
+    },
+    {
+      question: "How many students will be in my computer training classes?",
+      answer: "Between two to ten students. We also provide one-on-one training."
+    },
+    {
+      question: "Do I get to use my own computer in your computer training program?",
+      answer: "Yes, but we also provide PCs. You will do a lot of lab work, so having your own computer is encouraged."
+    },
+    {
+      question: "What type of jobs would I qualify for if I take computer certification training?",
+      answer: "Possible job titles include Network Engineer, Network Administrator, Systems Analyst, System Engineer, Cloud Engineer, and more."
+    },
+    {
+      question: "When does your next computer class start?",
+      answer: "We start classes monthly. Customized batches are available. Call us for details."
+    },
+    {
+      question: "I don’t see the computer class that I am looking for. Can you still help me?",
+      answer: "Yes. We offer many popular courses and can guide you to find specialized training or create a customized course for a group."
+    }
+  ];
