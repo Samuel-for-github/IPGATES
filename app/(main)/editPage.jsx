@@ -38,7 +38,7 @@ const editPage = () => {
     const router = useRouter()
     const [inputs, setInputs] = useState({
         name: '',
-        phoneNumber: '',
+        phone_number: '',
         image: '',
         address: ''
     })
@@ -49,56 +49,58 @@ const editPage = () => {
         if (user) {
             setInputs({
                 name: user.name || '',
-                phoneNumber: user.phoneNumber || '',
+                phone_number: user.phone || '',
                 image: user.image || '',
                 address: user.address || ''
             })
         }
     }, [user])
-const onSubmit = async ()=>{
-    let userdata = {...inputs};
-    let {name, phoneNumber, address,image}= userdata;
+    const onSubmit = async () => {
+        let userdata = { ...inputs };
+        let { name, phone_number, address, image } = userdata;
     
-    
-    if (!name || !phoneNumber || !address || !image) {
-       Alert.alert("Edit", "Please enter the details") 
-       return ;
-    }
-    if (typeof image == 'object') {
-        console.log('img uri', image.uri);
-        
-        let imageRes = await uploadFile('profiles', image?.uri, userdata)
-        if (imageRes.success) {
-            userdata.image = imageRes.data
+        // Validation checks
+        if (!name || name.length < 3) {
+            Alert.alert("Invalid Name", "Name must be at least 3 characters.");
+            return;
         }
-        else{
-            userdata.image = null
+        if (!phone_number || !/^\d{10}$/.test(phone_number)) {
+            Alert.alert("Invalid Phone Number", "Phone number must be exactly 10 digits.");
+            return;
         }
-    }
-    setLoading(true)
-    const res = await updateStudent(user?.id, inputs)
-    setLoading(false)
-    console.log(res);
-    if (res.success) {
-        setUserData({...user, ...userdata});
-        router.back();
-    }
+        if (!address || address.length < 5) {
+            Alert.alert("Invalid Address", "Address must be at least 5 characters.");
+            return;
+        }
+        if (!image) {
+            Alert.alert("Profile Picture Required", "Please select a profile picture.");
+            return;
+        }
     
-    //update user
-}
-
+        setLoading(true);
+        const res = await updateStudent(user?.id, inputs);
+        setLoading(false);
+    
+        if (res.success) {
+            setUserData({ ...user, ...userdata });
+            router.back();
+        } else {
+            Alert.alert("Error", "Failed to update profile. Please try again.");
+        }
+    };
+    
 
 
 let imageSrc = user.image && typeof inputs.image == 'object' ? inputs.image.uri : getImage(inputs.image)
 console.log("img", imageSrc.uri);
 
     return (
-        <ScreenWrapper bg="#000">
-            <StatusBar style='light' />
+        <ScreenWrapper bg="#b7e4c7">
+            <StatusBar style='dark' />
             <View style={styles.container}>
                 <View style={styles.header}>
                     <View>
-                        <BackButton color="white" size={wp(8)} />
+                        <BackButton size={wp(8)} />
                     </View>
                     <View>
                         <Text style={styles.heading}>Edit Profile</Text>
@@ -111,14 +113,14 @@ console.log("img", imageSrc.uri);
                             <Feather name="camera" style={styles.editIcon} size={24} color="black" />
                         </Pressable>
                     </View>
-                    <Text style={{ fontSize: hp(2), fontWeight: theme.fonts.semibold,color: theme.colors.textLight }}>Please fill your profile details</Text>
+                    <Text style={{ fontSize: hp(2), fontWeight: theme.fonts.semibold,color: theme.colors.textDark }}>Please fill your profile details</Text>
                     <Input value={inputs.name} containerStyles={styles.containerStyles} style={styles.input} onChangeText={value => {
                         setInputs({ ...inputs, name: value })
 
                     }} icon={<Feather name='user' size={25} color="black" />} placeholderTextColor={theme.colors.textDark} placeholder="Enter your name" />
                     
-                    <Input keyboardType='numeric' value={inputs.phoneNumber} containerStyles={styles.containerStyles} style={styles.input} onChangeText={value => {
-                        setInputs({ ...inputs, phoneNumber: value })
+                    <Input keyboardType='numeric' value={inputs.phone_number} containerStyles={styles.containerStyles} style={styles.input} onChangeText={value => {
+                        setInputs({ ...inputs, phone_number: value })
 
                     }} icon={<Ionicons name='call-outline' size={25} color="black" />} placeholderTextColor={theme.colors.textDark} placeholder="Enter your Phone Number" />
                     
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     heading: {
-        color: theme.colors.textLight,
+        color: theme.colors.textDark,
         fontSize: hp(4),
         marginLeft: wp(20)
 
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     infoText: {
         fontSize: hp(2),
         fontWeight: theme.fonts.medium,
-        color: theme.colors.blue
+        color: theme.colors.dark
     },
     info: {
         flexDirection: 'row',

@@ -19,7 +19,7 @@ import { decode } from 'base64-arraybuffer'
 import * as FileSystem from 'expo-file-system'
 import Loading from '../../../components/Loading.jsx';
 import { courses } from '../../../constants/data.js';
-const attendance = () => {
+const selectCourse = () => {
     const { setAuth, user } = useAuth()
     const [uri, setUri] = useState(null)
     const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ const attendance = () => {
                 <View style={{ width: '100%' }}>
                     <BackButton size={35} />
                 </View>
-                <Text style={styles.heading}>Attendance</Text>
+                <Text style={styles.heading}>Select course to end</Text>
 
 
 
@@ -72,7 +72,7 @@ const attendance = () => {
                       
                                       <TouchableOpacity key={i} style={styles.cards}
                                         onPress={() => {
-                                          router.push(`admin/attendance/attendance?folder=${encodeURIComponent(value.title)}`)
+                                          router.push(`admin/course/course?folder=${encodeURIComponent(value.title)}`)
                                         }}
                                       >
                                         <Text style={styles.cardsText}>{value.title}</Text>
@@ -90,7 +90,7 @@ const attendance = () => {
     )
 }
 
-export default attendance
+export default selectCourse
 
 const styles = StyleSheet.create({
     container: {

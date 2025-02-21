@@ -16,7 +16,7 @@
   import Loading from '../../../components/Loading.jsx';
   import { ipgatesInfo, contactInfo } from '../../../constants/data.js';
 import WebView from 'react-native-webview';
-import MapView,{Marker} from 'react-native-maps';
+import MapView,{Marker, PROVIDER_GOOGLE} from 'react-native-maps';
   import * as Location from 'expo-location';
   import Fontisto from '@expo/vector-icons/Fontisto';
   import BackButton from '../../../components/BackButton.jsx';
@@ -117,7 +117,13 @@ import MapView,{Marker} from 'react-native-maps';
   } else if (location) {
     text = JSON.stringify(location);
   }
- 
+  const handleMapPress = () => {
+    const lat = 15.27980447678085; // Example latitude
+    const long = 73.9600832351579; // Example longitude
+    const url = `https://www.google.com/maps?q=${lat},${long}`; // Link to Google Maps
+    
+    Linking.openURL(url).catch((err) => console.error('Error opening map', err));
+  };
   
     return (
           <ScreenWrapper bg="#b7e4c7">
@@ -156,24 +162,11 @@ import MapView,{Marker} from 'react-native-maps';
          </View>
          
         </View>
-          <View style={styles.mapContainer}>
-            {/* <Text>{text}</Text> */}
-            <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: 15.279721876356406,
-          longitude: 73.957533158195,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-         <Marker
-          coordinate={{ latitude: 15.279721876356406, longitude: 73.957533158195 }}
-          title="I P-Gates"
-        />
-        </MapView>
-
-          </View>
+        <View style={styles.mapContainer}>
+  <Pressable onPress={handleMapPress}>
+    <Image style={styles.Image} source={{ uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738753121/Screenshot_2025-02-05_162518_gsk2ow.png' }} />
+  </Pressable>
+</View>
         </ScrollView>
 
         {/* Map Section */}
@@ -224,6 +217,10 @@ import MapView,{Marker} from 'react-native-maps';
   //   },
   // });
   const styles = StyleSheet.create({
+    Image:{
+      height: hp(25),
+      width: wp(96)
+    },
     button: {
       flexDirection: 'row',
       backgroundColor: "#25D366",

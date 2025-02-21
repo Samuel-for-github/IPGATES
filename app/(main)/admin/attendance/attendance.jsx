@@ -77,6 +77,8 @@ const attendance = () => {
         setLoading(true);
         try {
             for (const student of attendanceData) {
+                console.log(student);
+                
                 await supabase.from('attendance').upsert({
                     student_id: student.id,
                     course_name: cId,
@@ -137,7 +139,7 @@ const attendance = () => {
                         </Pressable>
                     </View>
                 </View>
-                <Text style={styles.heading}>Mark {folder} Attendance</Text>
+                <Text style={styles.heading}>{folder} </Text>
                 <Calendar
                     onDayPress={handleDateChange}
                     markedDates={{

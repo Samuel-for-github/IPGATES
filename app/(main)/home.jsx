@@ -41,15 +41,15 @@ const home = () => {
 
   return (
     <ScreenWrapper bg="#b7e4c7">
-      <StatusBar style="dark" />
-      {role === "Admin" ? (
-        <AdminView handleLogout={handleLogout}/>
-      ) : role === "Teacher" ? (
-        <TeacherView />
-      ) : (
-        <StudentView handleLogout={handleLogout} />
-      )}
-    </ScreenWrapper>
+    <StatusBar style="dark" />
+    {role === "Admin" ? (
+      <AdminView handleLogout={handleLogout} />
+    ) : role === "Teacher" || role === "Accepted-Teacher" ? (
+      <TeacherView handleLogout={handleLogout} />
+    ) : (
+      <StudentView handleLogout={handleLogout} />
+    )}
+  </ScreenWrapper>
   );
 };
 
@@ -93,7 +93,7 @@ const AdminView = ({handleLogout}) => {
         <View style={style2.content}>
             {/* Render course navigation only if the user is not a teacher */}
         
-              <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/course')}>
+              <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/courseDecision')}>
                 <Text style={style2.card}>Courses</Text>
               </TouchableOpacity>
            
@@ -108,7 +108,7 @@ const AdminView = ({handleLogout}) => {
                 <Text style={style2.card}>Verify Student for Courses</Text>
               </TouchableOpacity>
             
-              <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/verify')}>
+              <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/verifyT')}>
                 <Text style={style2.card}>Verify Teacher for Courses</Text>
               </TouchableOpacity>
              
@@ -117,11 +117,14 @@ const AdminView = ({handleLogout}) => {
               </TouchableOpacity>
         
             {/* Render notes and attendance for both admin and teacher */}
-            <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/notes')}>
+            {/* <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/notes')}>
               <Text style={style2.card}>Notes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/attendance')}>
+            </TouchableOpacity> */}
+            {/* <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/attendance')}>
               <Text style={style2.card}>Attendance</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity style={style2.navigate} onPress={() => router.push('admin/demo_videos')}>
+              <Text style={style2.card}>Demo Videos</Text>
             </TouchableOpacity>
           </View>
 
@@ -130,19 +133,64 @@ const AdminView = ({handleLogout}) => {
     </View>
 )};
 
-const TeacherView = () => (
-  <View style={styles.content}>
-    <Text style={styles.roleTitle}>Teacher Panel</Text>
-    <TouchableOpacity style={styles.cards}>
-      <FontAwesome5 name="book-open" size={100} color="black" />
-      <Text style={styles.cardsText}>My Courses</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.cards}>
-      <FontAwesome5 name="user-graduate" size={100} color="black" />
-      <Text style={styles.cardsText}>Student Progress</Text>
-    </TouchableOpacity>
-  </View>
-);
+const TeacherView = ({ handleLogout }) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setRole(user.role); // Ensure role is fetched from user data
+    }
+  }, [user]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.mainContent}>
+        <View style={styles.top}>
+          <View style={styles.header}>
+            <Text style={styles.headingText}>Hi, {user?.name}</Text>
+            <View style={styles.icon}>
+              <Pressable>
+                <Ionicons name="notifications-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable>
+                <Ionicons onPress={handleLogout} name="log-out-outline" size={24} color="black" />
+              </Pressable>
+            </View>
+          </View>
+          <Image 
+            source={{ uri: 'https://res.cloudinary.com/dyhjjsb5g/image/upload/v1738423695/WhatsApp_Image_2025-01-06_at_20.04.06_d94bb8d8-removebg-preview_sx06fp.png' }} 
+            style={styles.welcomeImage} 
+            resizeMode="contain" 
+          />
+        </View>
+
+        <View style={styles.content}>
+          {/* If the role is 'Teacher' (not 'Accepted-Teacher'), show the additional components */}
+          {role === 'Teacher' && (
+            <>
+              <Text>Your Account is not Verified</Text>
+            </>
+          )}
+
+          {/* If the role is 'Accepted-Teacher', show only Notes and Attendance */}
+          {role === 'Accepted-Teacher' && (
+            <>
+              <TouchableOpacity style={styles.cards} onPress={() => router.push('admin/notes')}>
+                <Text style={styles.cardsText}>Notes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cards} onPress={() => router.push('admin/attendance')}>
+                <Text style={styles.cardsText}>Attendance</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+};
+
 
 const StudentView = ({ handleLogout }) => {
   const { user } = useAuth();

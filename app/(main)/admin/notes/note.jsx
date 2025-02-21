@@ -26,9 +26,20 @@ const note = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // State to hold uploaded files
 
   const select = async () => {
-    let result = await DocumentPicker.getDocumentAsync();
-    let file = result.assets[0].uri;
-    setUri(file);
+    let result = await DocumentPicker.getDocumentAsync({
+      type: 'application/pdf', // Restrict selection to PDFs
+    });
+  
+    if (result.canceled) return;
+  
+    let file = result.assets[0];
+  
+    if (!file.mimeType || file.mimeType !== 'application/pdf') {
+      Alert.alert('Error', 'Only PDF files are allowed');
+      return;
+    }
+  
+    setUri(file.uri);
   };
 
   const upload = async () => {
@@ -174,15 +185,15 @@ const note = () => {
               />
             )}
 
-            {loading ? (
-              <Loading />
-            ) : (
-              <Button
-                buttonStyle={styles.button}
-                title="Upload Document"
-                onPress={upload}
-              />
-            )}
+{uri && !loading && (
+  <Button
+    buttonStyle={styles.button}
+    title="Upload Document"
+    onPress={upload}
+  />
+)}
+
+{loading && <Loading />}
 
             <Text style={styles.heading}>Uploaded Documents</Text>
             {uploadedFiles.length > 0 ? (

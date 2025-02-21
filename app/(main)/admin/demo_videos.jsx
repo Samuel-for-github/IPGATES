@@ -20,52 +20,55 @@ import * as FileSystem from 'expo-file-system'
 import Loading from '../../../components/Loading.jsx';
 import { courses } from '../../../constants/data.js';
 
-const Job = () => {
+const demo = () => {
   const { user } = useAuth();
   const router = useRouter();
-  const [feedbacks, setFeedbacks] = useState([]);
+  const [dynamicCourses, setDynamicCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchFeedbacks = async () => {
-    setLoading(true);
-    const { data: feedbackData, error: feedbackError } = await supabase.from('feedback').select('*');
-    if (feedbackError) {
-      Alert.alert('Error', feedbackError.message);
-      setLoading(false);
-      return;
-    }
-    
-    const studentIds = feedbackData.map(f => f.student_id);
-    const { data: studentsData, error: studentError } = await supabase.from('users').select('id, name').in('id', studentIds);
-    if (studentError) {
-      Alert.alert('Error', studentError.message);
-      setLoading(false);
-      return;
-    }
+  // Static courses from constants/data.js
+  const staticCourses = courses; 
 
-    const studentMap = Object.fromEntries(studentsData.map(s => [s.id, s.name]));
-    const updatedFeedbacks = feedbackData.map(f => ({ ...f, student_name: studentMap[f.student_id] || 'Unknown' }));
+  // Fetch dynamic courses from Supabase
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('new_courses')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    setFeedbacks(updatedFeedbacks);
-    setLoading(false);
+      if (error) throw error;
+      setDynamicCourses(data);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => {
-    fetchFeedbacks();
+    // console.log(dynamicCourses);
+    
+    fetchCourses();
   }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchFeedbacks().then(() => setRefreshing(false));
+    fetchCourses();
   }, []);
+
+  // Combine static and dynamic courses, removing duplicates
+  const allCourses = staticCourses;
+
 
   return (
     <ScreenWrapper bg="#b7e4c7">
       <StatusBar style='dark' />
       <View style={styles.container}>
         <View style={styles.header}>
-          <BackButton  size={35} />
+          <BackButton size={35} />
           <View style={styles.icon}>
             <Pressable onPress={() => router.back()}>
               <Feather name="log-out" size={24} />
@@ -73,47 +76,69 @@ const Job = () => {
           </View>
         </View>
 
-        <Text style={styles.heading}>Feedbacks</Text>
+        <Text style={styles.heading}>Demo Videos</Text>
 
-        {loading ? (
-          <Loading />
-        ) : (
-          <ScrollView 
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            <View style={styles.content}>
-              {feedbacks.length === 0 ? (
-                <Text style={styles.noFeedback}>No feedback available.</Text>
-              ) : (
-                feedbacks.map((item, index) => (
-                  <View key={index} style={styles.feedbackCard}>
-                    <Text style={styles.courseName}>{item.course_name}</Text>
-                    <Text style={styles.rating}>Rating: {item.rating} ⭐</Text>
-                    <Text style={styles.feedbackText}><Text style={{fontWeight: '800', color: 'black'}}>Main Feedback :-</Text> {item.content}</Text>
-                    <Text style={styles.feedbackText}><Text style={{fontWeight: '800', color: 'black'}}>Is there anything you think could be improved or added to the course? :-</Text> {item.improvements}</Text>
-                    <Text style={styles.feedbackText}><Text style={{fontWeight: '800', color: 'black'}}>Was the speed of teaching too fast, too slow, or just right for you? :-</Text> {item.teaching_speed}</Text>
-                    <Text style={styles.feedbackText}><Text style={{fontWeight: '800', color: 'black'}}>Were the materials (videos, handouts, etc.) helpful for your learning? :-</Text> {item.materials_feedback}</Text>
-                    <Text style={styles.feedbackText}><Text style={{fontWeight: '800', color: 'black'}}>Did this course make you feel more confident in using IT tools? :-</Text> {item.confidence}</Text>
-
-                    
-                    
-                    <Text style={styles.user}>- {item.student_name}</Text>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
+          <View style={styles.content}>
+            {allCourses.map((course, i) => (
+              <TouchableOpacity 
+                key={course.id || i} // Use ID for dynamic, index for static
+                style={styles.cards}
+                onPress={() => {
+                  const courseTitle = course.title || course.heading || course.c_name;
+                  router.push(`admin/demo/demos?course=${encodeURIComponent(courseTitle)}`)
+                }}
+              >
+                <Text style={styles.cardsText}>{course.title || course.heading|| course.c_name}</Text>
+                {/* {course.subheading && (
+                  <Text style={styles.courseSubheading}>{course.subheading}</Text>
+                )} */}
+                {/* Show badge for dynamic courses */}
+                {course.id && (
+                  <View style={styles.newBadge}>
+                    <Text style={styles.newBadgeText}>New</Text>
                   </View>
-                ))
-              )}
-            </View>
-          </ScrollView>
-        )}
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
     </ScreenWrapper>
   );
 };
 
-export default Job;
 
-const styles = StyleSheet.create({
+export default demo;
+
+const styles = StyleSheet.create({cards: {
+    flex: 1,
+    marginVertical: hp(3),
+    paddingVertical: hp(5),
+    borderRadius: theme.radius.xl,
+    borderColor: theme.colors.primary,
+    borderWidth: 2,
+    backgroundColor: '#40916c',
+    width: wp(81),
+    borderCurve: 'continuous',
+    alignItems: 'center',
+    shadowColor: theme.colors.dark,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  cardsText: {
+    fontSize: hp(4),
+    fontWeight: theme.fonts.semibold,
+    color: theme.colors.textDark,
+  },
   container: {
     flex: 1,
   },
@@ -177,5 +202,24 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     marginTop: hp(5),
+  },courseSubheading: {
+    fontSize: hp(2),
+    color: theme.colors.textDark,
+    marginTop: hp(1),
+    textAlign: 'center'
   },
+  newBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12
+  },
+  newBadgeText: {
+    color: 'white',
+    fontSize: hp(1.8),
+    fontWeight: 'bold'
+  }
 });

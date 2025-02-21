@@ -4,26 +4,26 @@ export const MicrosoftData = [
     {
         heading: "Microsoft Technology Associate : MTA (Windows Server Administration Fundamentals)",
         subheading: " This course is designed to provide candidates with an assessment of their knowledge of fundamental server administration concepts.",
-        price: 22000
+     
     },
     {
     heading: "Microsoft Technology Associate : MTA (Networking Fundamentals)",
     subheading: "This course is designed to provide candidates with an assessment of their knowledge of fundamental networking concepts.",
-    price: 22000
+  
 }, {
     heading: "Microsoft Technology Associate : MTA (Security Fundamentals )",
     subheading: "This course validates that a candidate has fundamental security knowledge and skills.",
-    price: 22000
+   
 },
 {
     heading: "Microsoft Solutions Certified Associate :MCSA Server 2012 /2016",
     subheading: "The MCSA: Windows Server 2012 & 2016 Course is designed for  intermediate level  candidates to monitor ,administrator and manage Windows Server 2012 & 2016 , client-server structure, network infrastructure, virtualization, domain management and security implementation.",
-    price: 22000
+
 },
 {
     heading: "Microsoft Azure Fundamentals (Cloud)",
     subheading: "This course is designed to prepare candidates for the Azure Fundamentals certification . It provides foundational knowledge of cloud services and how those services are provided with Microsoft Azure",
-    price: 7000
+   
 },
 ]
 export const CiscoData = [
@@ -98,23 +98,28 @@ This course focuses on  the fundamentals of Linux administration “survival ski
 export const courses =[
     {
         title: "Microsoft",
+        badge: 'standard',
         price: 22000
         // img: require('../assets/images/bg1.jpg')
     },
     {
         title: "Cisco",
+        badge: 'standard',
         price: 22000
         // img: require('../assets/images/bg1.jpg')
     }, {
         title:  "Red Hat Linux",
+        badge: 'standard',
         price: 12000
         // img: require('../assets/images/bg1.jpg')
     }, {
         title: "Python",
+        badge: 'standard',
         price: 12000
         // img: require('../assets/images/bg1.jpg')
     }, {
         title: "Hardware & Networking",
+        badge: 'standard',
         price: 5000
         // img: require('../assets/images/bg1.jpg')
     }
@@ -184,7 +189,43 @@ Upon earning a certification, 61% of tech professionals say they earned a promot
     title: 'How to prepare for an exam?',
     des:`Understand which skills to prepare.
 Research the path that you wish to build a career in.  Role-based certification training courses, such as our Azure training, Hybrid Server training and Dynamics 365 training, can all help you  into a specific role while preparing for your exam`
-}]
+},
+{
+    title: "Why get computer training?",
+    des: "If you are thinking about a new career, computer skills are a necessity. Advanced computer courses enhance job security and salary for IT professionals."
+  },
+  {
+    title: "Why should I take instructor-led computer training when I can take computer classes online or self-study for IT certification exams?",
+    des: "Instructor-led training offers real-time guidance, job-oriented scenarios, and interactive learning, which are difficult with self-study or online courses."
+  },
+  {
+    title: "How long are your computer classes?",
+    des: "Courses last from two weeks to eight months depending on the program. Call us for details."
+  },
+  {
+    title: "Who will be teaching my computer class?",
+    des: "Our instructors are experienced, well-spoken, patient, and multi-vendor certified."
+  },
+  {
+    title: "How many students will be in my computer training classes?",
+    des: "Between two to ten students. We also provide one-on-one training."
+  },
+  {
+    title: "Do I get to use my own computer in your computer training program?",
+    des: "Yes, but we also provide PCs. You will do a lot of lab work, so having your own computer is encouraged."
+  },
+  {
+    title: "What type of jobs would I qualify for if I take computer certification training?",
+    des: "Possible job titles include Network Engineer, Network Administrator, Systems Analyst, System Engineer, Cloud Engineer, and more."
+  },
+  {
+    title: "When does your next computer class start?",
+    des: "We start classes monthly. Customized batches are available. Call us for details."
+  },
+  {
+    title: "I don’t see the computer class that I am looking for. Can you still help me?",
+    des: "Yes. We offer many popular courses and can guide you to find specialized training or create a customized course for a group."
+  }]
 
 export const computerTrainingCourses = [
     {

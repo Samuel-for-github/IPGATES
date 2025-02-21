@@ -1,127 +1,144 @@
-import { Alert, Pressable, TouchableOpacity, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
-import React, { useEffect } from 'react'
-import ScreenWrapper from '../../../components/ScreenWrapper.jsx'
+import { Alert, Pressable, TouchableOpacity, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import ScreenWrapper from '../../../components/ScreenWrapper.jsx';
 import { supabase } from '../../../lib/supabase.js';
 import { useAuth } from '../../../context/AuthContext.js';
-import { hp, wp } from '../../../helper/common.js'
+import { hp, wp } from '../../../helper/common.js';
 import Feather from '@expo/vector-icons/Feather';
-import { theme } from '../../../constants/theme.js'
+import { theme } from '../../../constants/theme.js';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter, useSearchParams, useLocalSearchParams, useSegments } from 'expo-router';
-import BackButton from '../../../components/BackButton.jsx'
-import { MicrosoftData, CiscoData, RedHatLinuxData, PythonData, HandNData, courses } from '../../../constants/data.js';
-import Avatar from '../../../components/Avatar.jsx';
-import Footer from '../../../components/Footer.jsx';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Linking from 'expo-linking'
+import { useRouter } from 'expo-router';
+import BackButton from '../../../components/BackButton.jsx';
+import { courses as staticCourses } from '../../../constants/data.js';
 
 const Courses = () => {
+    const { user } = useAuth();
+    const router = useRouter();
 
-    const { setAuth, user } = useAuth()
-    const router = useRouter()
-    const segments = useSegments();
-    const { path } = useLocalSearchParams()
+    const [statics] = useState(staticCourses); // Permanent static courses
+    const [dynamic, setDynamic] = useState([]); // Dynamic courses from DB
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState(1);
 
+    // Fetch dynamic courses with pagination
+    const fetchCourses = async () => {
+        if (!hasMore || loading) return;
 
-    async function signOut() {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('new_courses') // Ensure correct table name
+                .select('*')
+                .order('created_at', { ascending: false })
+                .range((page - 1) * 5, page * 5 - 1);
 
-        const { error } = await supabase.auth.signOut()
-        console.log(error);
+            if (error) throw error;
 
-        if (error) {
-            Alert.alert('Error', error.message)
-        }
-    }
+            if (data.length > 0) {
+                // Filter out duplicates and static course matches
+                const newCourses = data.filter(course => 
+                    !statics.some(s => s.title === course.title) &&
+                    !dynamic.some(d => d.id === course.id)
+                );
 
-    const handleLogout = async () => {
-        Alert.alert('Confirm', 'Are you sure you want to log out?', [
-            {
-                text: 'Cancel',
-                onPress: () => console.log("logout cancel"),
-                style: 'cancel'
-
-            }, {
-                text: 'Logout',
-                onPress: () => signOut(),
-                style: 'destructive'
+                setDynamic(prev => [...prev, ...newCourses]);
+                setPage(prev => prev + 1);
+            } else {
+                setHasMore(false);
             }
-        ])
-    }
+        } catch (err) {
+            Alert.alert('Error', err.message || 'Failed to load courses');
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchCourses();
+    }, []); // Initial load
+
+    // Combine courses without duplicates
+    const allCourses = [...statics, ...dynamic];
+
+    const handleScroll = ({ nativeEvent }) => {
+        const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+        const paddingToBottom = 20;
+        if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+            fetchCourses();
+        }
+    };
+
     return (
         <ScreenWrapper bg="#b7e4c7">
             <StatusBar style='dark' />
             <View style={styles.container}>
-
                 <View style={styles.header}>
                     <BackButton size={35} />
-
                     <View style={styles.icon}>
                         <Pressable>
                             <Ionicons name="notifications-outline" size={24} />
                         </Pressable>
-                        <Pressable onPress={handleLogout}>
+                        <Pressable onPress={() => Alert.alert("Logout", "Not implemented")}>
                             <Feather name="log-out" size={24} />
                         </Pressable>
                     </View>
                 </View>
-                <View>
-                    <Text style={styles.heading}>Courses Available</Text>
-                </View>
-                <ScrollView>
 
+                <Text style={styles.heading}>Courses Available</Text>
+
+                <ScrollView 
+                    onScroll={handleScroll}
+                    scrollEventThrottle={400}
+                    contentContainerStyle={styles.scrollContent}
+                >
                     <View style={styles.content}>
-                        {courses.map((value, i) => {
-                            return (
-                                <TouchableOpacity key={i} style={styles.cards}
-                                    onPress={() => {
-                                        router.push(`/courses/course?path=${encodeURIComponent(value.title)}&price=${value.price}`)
-                                    }}
-                                >
-                                    <Text style={styles.cardsText}>{value.title}</Text>
-                                </TouchableOpacity>
-                            )
-                        })}
+                        {allCourses.map((course) => (
+                            <TouchableOpacity 
+                                key={course.id || course.title} // Unique key
+                                style={styles.cards}
+                                
+                                onPress={() => router.push(
+                                    `/courses/course?path=${encodeURIComponent(course.title || course.c_name)}&price=${course.price ||course.fees}&badge=${course.badge}`
+                                )}
+                            >
+                                <Text style={styles.cardsText}>{course.title || course.c_name}</Text>
+                                {/* Show origin badge */}
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>
+                                        {course.id ? 'New' : 'Standard'}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
                     </View>
+
+                    {loading && (
+                        <ActivityIndicator 
+                            size="large" 
+                            color={theme.colors.primary} 
+                            style={styles.loader} 
+                        />
+                    )}
+
+                    {!hasMore && (
+                        <Text style={styles.endText}>No more courses to load</Text>
+                    )}
                 </ScrollView>
-                {/* <Footer /> */}
             </View>
-
         </ScreenWrapper>
-    )
-}
-
-export default Courses
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between'
-    },
-    top: {
-        // backgroundColor: 'rgb(222, 224, 228)',
-        marginHorizontal: wp(3),
-        borderRadius: theme.radius.md,
-        gap: hp(10),
-        paddingBottom: hp(3)
-        // borderWidth: 2
-    },
-    containerStyles: {
-        marginHorizontal: wp(3.5),
-        borderRadius: 10
-
-    },
-    headingText: {
-        fontSize: hp(3),
-        color: 'black'
     },
     heading: {
         color: theme.colors.textDark,
-        fontSize: hp(6),
-        width: wp(80),
+        fontSize: hp(4),
         marginVertical: hp(2),
         marginHorizontal: wp(4),
-        textAlign: 'left'
     },
     header: {
         flexDirection: 'row',
@@ -130,66 +147,59 @@ const styles = StyleSheet.create({
         marginHorizontal: wp(3),
         marginTop: hp(2)
     },
-    logo: {
-        height: 60,
-        width: 150,
-        backgroundColor: 'rgba(228, 222, 222, 0.91)',
-        borderRadius: 10,
-    },
     icon: {
         flexDirection: 'row',
         gap: 10,
-        justifyContent: 'space-between'
     },
     content: {
-        flex: 1,
-        // flexDirection: 'row',
-        gap: 10,
-        marginBottom: wp(15),
+        flexGrow: 1,
+        gap: hp(2),
+        paddingBottom: hp(4),
         alignItems: 'center'
     },
     cards: {
-        //   flex: 1,
-        marginVertical: hp(3),
-        //   paddingVertical: hp(5),
-        borderColor: theme.colors.primary,
-        borderWidth: 2,
+        width: wp(90),
+        minHeight: hp(15),
         backgroundColor: '#40916c',
         borderRadius: theme.radius.xl,
-        width: wp(80),
-        borderCurve: 'continuous',
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: theme.colors.dark,
-        shadowOffset: { width: 0, height: 9 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        height: hp(15)
-    },
-    card1: {
-        position: 'absolute',
-        top: -80,
-        width: wp(40),
-        height: hp(40),
-        borderRadius: 20,
+        borderWidth: 2,
+        borderColor: theme.colors.primary,
+        padding: hp(2),
         justifyContent: 'center',
         alignItems: 'center',
-        transform: [{ rotate: '90deg' }]
+        position: 'relative'
     },
     cardsText: {
-        //     borderColor: theme.colors.primary,
-        //   borderWidth: 1,
-        //   paddingVertical: hp(5),
-        justifyContent: 'center',
-        // height: hp(10),
-        fontSize: hp(4),
-        fontWeight: theme.fonts.semibold,
+        fontSize: hp(2.5),
+        fontWeight: '600',
         color: theme.colors.textDark,
+        textAlign: 'center'
     },
-    background: {
+    loader: {
+        marginVertical: hp(2)
+    },
+    badge: {
         position: 'absolute',
-        height: hp(150),
-        width: wp(100),
+        top: 10,
+        right: 10,
+        backgroundColor: theme.colors.primary,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12
     },
+    badgeText: {
+        color: 'white',
+        fontSize: hp(1.5),
+        fontWeight: 'bold'
+    },
+    endText: {
+        textAlign: 'center',
+        color: theme.colors.textDark,
+        marginVertical: hp(2)
+    },
+    scrollContent: {
+        flexGrow: 1
+    }
+});
 
-})
+export default Courses;

@@ -96,14 +96,14 @@ const course=()=>{
 
 
     return (
-    <ScreenWrapper bg="#000">
-        <StatusBar style="light" />
+    <ScreenWrapper bg="#b7e4c7">
+        <StatusBar style="dark" />
         <View style={styles.container}>
             <View style={styles.header}>
-                <BackButton color="white" size={35} />
+                <BackButton  size={35} />
                 <View style={styles.icon}>
                     <Pressable onPress={handleLogout}>
-                        <Feather name="log-out" color="white" size={24} />
+                        <Feather name="log-out"  size={24} />
                     </Pressable>
                 </View>
             </View>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: wp(4),
     },
     heading: {
-        color: theme.colors.textLight,
+        color: theme.colors.textDark,
         fontSize: hp(3),
         fontWeight: 'bold',
         marginVertical: hp(3),

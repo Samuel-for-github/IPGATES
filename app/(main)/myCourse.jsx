@@ -33,6 +33,8 @@ const MyCourse = () => {
     setRefreshing(true);
     try {
       const res = await getCourseData(user?.id);
+
+      
       setCourse(res.data || []);
     } catch (err) {
       console.error("Error fetching course data:", err.message);
@@ -44,6 +46,8 @@ const MyCourse = () => {
 
   useEffect(() => {
     fetchCourseData();
+    console.log(course);
+    
   }, [user?.id]);
 
   return (
@@ -81,16 +85,36 @@ const MyCourse = () => {
             renderItem={({ item }) => (
               <View style={styles.courseCard}>
                 <Text style={styles.courseName}>{item.c_name}</Text>
-                <Text style={styles.courseStatus}>
-                  Status: {item.request}
-                </Text>
+                <Text style={styles.courseStatus}>Status: {item.request}</Text>
+            
                 {item.request === 'Completed' && (
-  <TouchableOpacity style={styles.feedbackButton} onPress={()=>{
-    router.push(`/feedback?course=${item.c_name}`)
-  }}>
-    <Text style={styles.feedbackText}>Give Feedback</Text>
-  </TouchableOpacity>
-)}
+                  <TouchableOpacity
+                    style={styles.feedbackButton}
+                    onPress={() => {
+                      router.push(`/feedback?course=${item.c_name}`);
+                    }}
+                  >
+                    <Text style={styles.feedbackText}>Give Feedback</Text>
+                  </TouchableOpacity>
+                )}
+            
+                {item.request === 'not-paid' && (
+                  <TouchableOpacity
+                    style={styles.payButton}
+                    onPress={() => {
+                      let courses;
+                      if (item.c_name == "Hardware & Networking") {
+                       courses = "Hardware and Networking"
+                      }
+                      else{
+                        courses= item.c_name
+                      }
+                      router.push(`/payment?course=${courses}&price=${item.fees}`);
+                    }}
+                  >
+                    <Text style={styles.payText}>Pay Now</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             )}
             contentContainerStyle={styles.courseContainer}
@@ -176,6 +200,27 @@ const styles = StyleSheet.create({
   },
   
   feedbackText: {
+    fontSize: hp(2),
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  payButton: {
+    marginTop: hp(1.5),
+    backgroundColor: theme.colors.primaryDark, // Orange for visibility
+    paddingVertical: hp(1.2),
+    paddingHorizontal: wp(5),
+    borderRadius: theme.radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // Android shadow effect
+  },
+  
+  payText: {
     fontSize: hp(2),
     fontWeight: 'bold',
     color: 'white',

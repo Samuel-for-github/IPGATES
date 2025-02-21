@@ -70,6 +70,8 @@ const enroll = () => {
       
       // useEffect for fetching course data
       useEffect(() => {
+        // console.log("path",path);
+        
           setLoading(true);
           fetchCourseData();
       }, [user?.id, path]);  // Run when user ID or course path changes    

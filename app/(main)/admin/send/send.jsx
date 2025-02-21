@@ -22,15 +22,25 @@ const Send = () => {
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
 
-  // Extract the student_id from the URL query parameter
-  const { student_id } = useLocalSearchParams();
+  // Extract the students parameter from the URL query
+  const { students } = useLocalSearchParams();
+  const [studentIds, setStudentIds] = useState([]);
 
   useEffect(() => {
-    if (student_id) {
-      // If student_id is provided, you can pre-fill or handle it differently
-      console.log(`Sending notifications to student with ID: ${student_id}`);
+    if (students) {
+      try {
+        const parsedStudents = JSON.parse(students); // Parse the stringified array
+        if (Array.isArray(parsedStudents)) {
+          setStudentIds(parsedStudents);
+          console.log("Sending notifications to students:", parsedStudents);
+        } else {
+          console.error("Invalid students format:", students);
+        }
+      } catch (error) {
+        console.error("Error parsing students:", error);
+      }
     }
-  }, [student_id]);
+  }, [students]);
 
   async function signOut() {
     const { error } = await supabase.auth.signOut();
@@ -57,11 +67,11 @@ const Send = () => {
     try {
       let completedStudents = [];
 
-      if (student_id) {
-        // If student_id is provided, fetch only that student's record
-        completedStudents = [{ student_id }];
+      if (studentIds.length > 0) {
+        // Use the parsed student IDs from params
+        completedStudents = studentIds.map(id => ({ student_id: id }));
       } else {
-        // Fetch all students who completed a course
+        // If no students are passed, fetch all students who completed a course
         const { data: students, error: fetchError } = await supabase
           .from('completedStudent')
           .select('student_id');

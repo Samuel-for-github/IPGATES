@@ -19,7 +19,7 @@ const courses = () => {
 
     const router = useRouter()
     const segments = useSegments();
-    const { path,price } = useLocalSearchParams()
+    const { path,price, badge } = useLocalSearchParams()
 
       
         const [loading, setLoading]=useState(false);
@@ -206,18 +206,30 @@ const courses = () => {
                                 </View>
                             )
                         })}
-                        <View style={{marginVertical: hp(2)}}>
-                        <Text style={{marginVertical: hp(1), fontSize: hp(5)}}>Price:- {price}</Text>
-                          {pending === 'not-applied'&&limit&&<Button title='Enroll' onPress={()=>{
-                        router.push(`courses/form?course=${encodeURIComponent(path)}&name=${user?.name}&phone=${user?.phoneNumber}&address=${user?.address}&email=${user?.email}&sId=${user?.id}&fees=${price}`)
-                        // enrolling(path, data,user.s_name, user.id, price)
-                        // setLoading(true)
-                        }} buttonStyle={styles.button}/> || loading&&<Text>Loading...</Text>}
-                        {!limit&&<Text>Enrollment is full</Text>}
-                        {pending==='Completed' && <Text>You have Completed the Course</Text>}
-                        {pending === 'pending'&& <Text>pending</Text>}
-                        {pending === 'Accepted'&& <Text>Already Enrolled</Text>}
-                        </View>
+                        <View style={{ marginVertical: hp(2) }}>
+    <Text style={{ marginVertical: hp(1), fontSize: hp(5) }}>Price: {price}</Text>
+    {badge !== 'standard' ? (
+        <Text style={{ fontSize: hp(3), color: 'red', fontWeight: 'bold' }}>Coming Soon</Text>
+    ) : (
+        pending === 'not-applied' && limit && (
+            <Button
+                title='Enroll'
+                onPress={() => {
+                    router.push(
+                        `courses/form?course=${encodeURIComponent(path)}&name=${user?.name}&phone=${user?.phoneNumber}&address=${user?.address}&email=${user?.email}&sId=${user?.id}&fees=${price}`
+                    );
+                }}
+                buttonStyle={styles.button}
+            />
+        ) || loading && <Text>Loading...</Text>
+    )}
+    {!limit && <Text>Enrollment is full</Text>}
+    {pending === 'Completed' && <Text>You have Completed the Course</Text>}
+    {pending === 'not-paid' && <Text>Not paid</Text>}
+    {pending === 'paid' && <Text>Pending</Text>}
+    {pending === 'Accepted' && <Text>Already Enrolled</Text>}
+</View>
+
                         
                     </View>
                 </ScrollView>

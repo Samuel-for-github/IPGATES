@@ -1,3 +1,4 @@
+/*
 import {
     Alert,
     TouchableOpacity,
@@ -229,4 +230,133 @@ const microsoft = useVideoPlayer(' https://res.cloudinary.com/dyhjjsb5g/video/up
     padding: 10,
   },
   });
+
+  */
+  import {
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+  } from "react-native";
+  import React, { useEffect, useState } from "react";
+  import { supabase } from "../../../lib/supabase.js";
+  import { useLocalSearchParams } from "expo-router";
+  import { useVideoPlayer } from "expo-video";
+  import { VideoView } from "expo-video";
+  import { StatusBar } from "expo-status-bar";
+  import BackButton from "../../../components/BackButton.jsx";
+  import { hp, wp } from "../../../helper/common.js";
+  import { theme } from "../../../constants/theme.js";
+  import ScreenWrapper from "../../../components/ScreenWrapper.jsx";
   
+  // New component to handle individual video players
+  const VideoPlayerComponent = ({ url }) => {
+    const player = useVideoPlayer(url, (player) => {
+      player.loop = true;
+    });
+    
+    return (
+      <View style={{ alignItems: "center", marginBottom: 20 }}>
+        <VideoView style={styles.video} player={player} 
+          allowsFullscreen 
+          allowsPictureInPicture 
+        />
+      </View>
+    );
+  };
+  
+  const Demos = () => {
+    const { folder } = useLocalSearchParams();
+    const [videoURLs, setVideoURLs] = useState([]);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      if (folder) fetchVideos();
+    }, [folder]);
+  
+    const fetchVideos = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase.storage
+          .from("videos")
+          .list(folder, {
+            limit: 10,
+            sortBy: { column: "created_at", order: "desc" },
+          });
+  
+        if (error) throw error;
+  
+        const videoLinks = await Promise.all(
+          data.map(async (file) => {
+            const { data } = supabase.storage
+              .from("videos")
+              .getPublicUrl(`${folder}/${file.name}`);
+            return data.publicUrl;
+          })
+        );
+  
+        setVideoURLs(videoLinks);
+      } catch (err) {
+        Alert.alert("Error", "Failed to fetch videos");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    return (
+      <ScreenWrapper bg="#b7e4c7">
+        <View style={styles.container}>
+          <StatusBar style="dark" />
+          <View style={styles.header}>
+            <BackButton size={35} />
+            <Text style={styles.heading}>{folder} Demo Videos</Text>
+          </View>
+  
+          <ScrollView>
+            <View style={styles.contentContainer}>
+              {loading ? (
+                <Text>Loading videos...</Text>
+              ) : videoURLs.length > 0 ? (
+                videoURLs.map((url, index) => (
+                  <VideoPlayerComponent key={index} url={url} />
+                ))
+              ) : (
+                <Text>No videos available for {folder}.</Text>
+              )}
+            </View>
+          </ScrollView>
+        </View>
+      </ScreenWrapper>
+    );
+  };
+  
+  export default Demos;
+  
+  // Keep the same styles as before
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#b7e4c7",
+    },
+    heading: {
+      color: theme.colors.textDark,
+      fontSize: hp(3),
+      width: wp(80),
+      marginVertical: hp(3),
+      textAlign: "left",
+      marginLeft: wp(4),
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginHorizontal: wp(3),
+      marginTop: hp(2),
+    },
+    video: {
+      width: 350,
+      height: 275,
+    },
+  });

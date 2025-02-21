@@ -50,12 +50,13 @@ const JobNotification = () => {
       const { data, error } = await supabase
         .from('jobNotification')
         .select('*')
-        .eq('student_id', user.id); // Assuming `user.id` is the identifier for the user
+        .eq('student_id', user?.id); // Assuming `user.id` is the identifier for the user
 
       if (error) {
         throw error;
       }
-
+      console.log(data);
+      
       setNotifications(data);
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -65,9 +66,10 @@ const JobNotification = () => {
   };
 
   useEffect(() => {
-    if (user) {
+   
       fetchNotifications();
-    }
+    console.log(user);
+    
   }, [user]);
 
   return (
